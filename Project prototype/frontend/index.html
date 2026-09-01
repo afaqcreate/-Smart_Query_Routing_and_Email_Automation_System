@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Query Routing - Prototype</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/main.js" defer></script>
+<body>
+
+    <!-- ============================================================ -->
+    <!-- HEADER -->
+    <!-- ============================================================ -->
+    <header class="page-header">
+        <div class="container page-header__inner">
+            <div class="page-header__brand">
+                <div class="page-header__logo">U</div>
+                <div>
+                    <h1 class="page-header__title">University Query Hub</h1>
+                    <p class="page-header__subtitle">Accounts Department · Prototype</p>
+                </div>
+            </div>
+            <div class="page-header__meta">
+                <span class="page-header__email">📧 helpdesk@university.edu</span>
+                <div class="page-header__avatar">A</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================ -->
+    <!-- MAIN CONTENT -->
+    <!-- ============================================================ -->
+    <main class="container page-main">
+
+        <!-- Step Indicators -->
+        <div class="step-indicator">
+            <div class="step-indicator__item">
+                <span class="step-indicator__number">1</span>
+                <span class="step-indicator__label">Ingestion</span>
+            </div>
+            <div class="step-indicator__divider"></div>
+            <div class="step-indicator__item">
+                <span class="step-indicator__number">2</span>
+                <span class="step-indicator__label">Categorization</span>
+            </div>
+            <div class="step-indicator__divider"></div>
+            <div class="step-indicator__item">
+                <span class="step-indicator__number">3</span>
+                <span class="step-indicator__label">Routing</span>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- SECTION 1: STUDENT EMAIL INGESTION -->
+        <!-- ========================================================== -->
+        <section class="card">
+            <div class="card__header">
+                <h2 class="card__title">📥 Step 1: Student Email Ingestion</h2>
+                <span class="pill pill--gray">Simulate Incoming Email</span>
+            </div>
+
+            <!-- Student Email Form -->
+            <div class="form-grid">
+                <div>
+                    <label class="form-label" for="studentId">Student ID</label>
+                    <input type="text" id="studentId" value="BC200401234" class="form-control">
+                </div>
+                <div>
+                    <label class="form-label" for="studentEmail">Student Email</label>
+                    <input type="email" id="studentEmail" value="student@vu.edu.pk" class="form-control">
+                </div>
+                <div class="form-grid__full">
+                    <label class="form-label" for="emailSubject">Subject</label>
+                    <input type="text" id="emailSubject" value="Urgent: Challan Payment Verification & Late Fee Fine" class="form-control">
+                </div>
+                <div class="form-grid__full">
+                    <label class="form-label" for="emailBody">Email Body</label>
+                    <textarea id="emailBody" rows="4" class="form-control">Respected Sir, I paid my semester fee voucher yesterday via mobile banking, but my LMS account still shows an unpaid status and has applied a Rs. 1000 late fine. Attached is my bank receipt. Kindly update my fee status.</textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button onclick="submitQuery()" class="btn btn--primary">📤 Submit Query</button>
+                <button onclick="loadSampleFee()" class="btn btn--secondary">🔄 Sample: Fee</button>
+                <button onclick="loadSampleScholarship()" class="btn btn--secondary">🔄 Sample: Scholarship</button>
+                <button onclick="loadSampleRefund()" class="btn btn--secondary">🔄 Sample: Refund</button>
+            </div>
+
+            <!-- Status Message -->
+            <div id="ingestionStatus" class="status-message hidden"></div>
+        </section>
+
+        <!-- ========================================================== -->
+        <!-- SECTION 2: SYSTEM OUTPUT (TICKET + CATEGORIZATION + ROUTING) -->
+        <!-- ========================================================== -->
+        <div class="output-grid">
+
+            <!-- Left: Ticket Details -->
+            <section class="card">
+                <h2 class="card__title card__title--spaced">🎫 Ticket Details</h2>
+                <div id="ticketDetails">
+                    <p class="placeholder-text">No ticket generated yet. Submit a query above.</p>
+                </div>
+            </section>
+
+            <!-- Right: Categorization & Routing -->
+            <section class="card">
+                <h2 class="card__title card__title--spaced">🧠 Step 2 & 3: Categorization → Routing</h2>
+                <div id="routingDetails">
+                    <p class="placeholder-text">Waiting for a ticket to process...</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- SECTION 3: ACCOUNTS DESK DASHBOARD -->
+        <!-- ========================================================== -->
+        <section class="card card--top-margin">
+            <div class="card__header">
+                <h2 class="card__title">📋 Step 3: Accounts Desk Dashboard</h2>
+                <span class="pill pill--green">● Live</span>
+            </div>
+
+            <!-- Desk Tabs -->
+            <div class="desk-tabs"> 
+                <button onclick="switchDesk('all')" class="desk-tab active" data-desk="all">📊 All Desks</button>
+                <button onclick="switchDesk('Fee')" class="desk-tab" data-desk="Fee">💰 Fee & Billing</button>
+                <button onclick="switchDesk('Scholarship')" class="desk-tab" data-desk="Scholarship">🎓 Scholarship</button>
+                <button onclick="switchDesk('Refund')" class="desk-tab" data-desk="Refund">💳 Refunds</button>
+            </div>
+
+            <!-- Desk Panel Content -->
+            <div id="deskPanel" class="desk-panel-list">
+                <p class="placeholder-text placeholder-text--sm">No tickets in queue. Submit a query to see it appear here.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================================ -->
+    <!-- TEMPLATES: dynamic markup rendered by main.js -->
+    <!-- ============================================================ -->
+
+    <template id="ticketDetailsTemplate">
+        <div class="ticket-summary fade-in">
+            <div class="ticket-summary__header">
+                <span class="ticket-id" data-field="id">ACT- </span>
+                <span class="status-badge" data-field="status"></span>
+            </div>
+            <div class="ticket-summary__grid">
+                <div><span class="label-muted">Student ID:</span> <span data-field="studentId"></span></div>
+                <div><span class="label-muted">Email:</span> <span data-field="studentEmail"></span></div>
+            </div>
+            <div class="ticket-summary__row"><span class="label-muted">Subject:</span> <span data-field="subject"></span></div>
+            <div class="ticket-summary__body" data-field="body"></div>
+            <div class="ticket-summary__timestamp">Submitted: <span data-field="timestamp"></span></div>
+        </div>
+    </template>
+
+    <template id="routingDetailsTemplate">
+        <div class="routing-summary fade-in">
+            <div class="routing-box routing-box--category">
+                <div class="routing-box__header">
+                    <span class="routing-box__title">📊 Detected Category</span>
+                    <span class="pill pill--blue">Confidence: <span data-field="confidence"></span></span>
+                </div>
+                <p class="routing-box__value" data-field="label"></p>
+                <p class="routing-box__sub">Priority: <span data-field="priority"></span></p>
+            </div>
+            <div class="routing-box routing-box--routed">
+                <div class="routing-box__header">
+                    <span class="routing-box__title">🚀 Routed To</span>
+                    <span class="pill pill--green">● Live</span>
+                </div>
+                <p class="routing-box__value routing-box__value--green" data-field="assignedTo"></p>
+                <p class="routing-box__sub">Desk: <span data-field="deskLabel"></span></p>
+            </div>
+            <div class="routing-summary__footer">
+                <span>📎 Keywords matched: <span data-field="category"></span></span>
+                <span>📋 Ticket: <span data-field="id"></span></span>
+            </div>
+        </div>
+    </template>
+
+    <template id="deskCardTemplate">
+        <div class="ticket-card desk-panel">
+            <div>
+                <div class="ticket-card__top">
+                    <span class="ticket-id" data-field="id"></span>
+                    <span class="status-badge" data-field="status"></span>
+                    <span class="pill pill--gray" data-field="priority"></span>
+                </div>
+                <p class="ticket-card__subject" data-field="subject"></p>
+                <p class="ticket-card__meta" data-field="meta"></p>
+            </div>
+            <div class="ticket-card__actions">
+                <span class="ticket-card__assigned" data-field="assignedTo"></span>
+                <button class="btn btn--resolve" data-action="resolve">✅ Resolve</button>
+            </div>
+        </div>
+    </template>
+
+    <template id="emptyDeskPanelTemplate">
+        <div class="empty-state">
+            <p class="empty-state__icon">📭</p>
+            <p>No tickets in this desk queue.</p>
+            <p class="empty-state__hint">Submit a query to see it appear here.</p>
+        </div>
+    </template>
+
+    <!-- Ticket Detail Modal Popup Box -->
+    <div id="ticketModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Ticket Details (<span id="popId"></span>)</h3>
+                <span id="closeModalBtn" class="close-btn">&times;</span>
+            </div>
+            <div class="modal-badges">
+                <span id="popStatus" class="badge"></span>
+                <span id="popPriority" class="badge"></span>
+                <span id="popCategory" class="badge text-orange"></span>
+            </div>
+            <div class="modal-meta">
+                <div><strong>Student ID:</strong> <span id="popStudentId"></span></div>
+                <div><strong>Email:</strong> <span id="popEmail"></span></div>
+                <div><strong>Created At:</strong> <span id="popTimestamp"></span></div>
+            </div>
+            <div class="modal-subject-box">
+                <strong>Subject:</strong>
+                <div id="popSubject" class="subject-text"></div>
+            </div>
+            <div class="modal-body-box">
+                <strong>Message Body:</strong>
+                <div id="popBody" class="body-text"></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+            </div>
+        </section>
+
+    </main>
+</body>
+</html>

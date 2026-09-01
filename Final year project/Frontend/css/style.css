@@ -1,0 +1,728 @@
+/* ============================================================
+   RESET / BASE
+   ============================================================ */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background-color: #F9FAFB; /* bg-gray-50 */
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #111827;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ============================================================
+   LAYOUT HELPERS
+   ============================================================ */
+.page-header {
+    background-color: #FFFFFF;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.container {
+    max-width: 80rem; /* max-w-7xl */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.page-header__inner {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page-header__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.page-header__logo {
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: #2563EB;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 1.125rem;
+}
+
+.page-header__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1F2937;
+    margin: 0;
+}
+
+.page-header__subtitle {
+    font-size: 0.75rem;
+    color: #6B7280;
+    margin: 0;
+}
+
+.page-header__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.page-header__email {
+    font-size: 0.875rem;
+    color: #4B5563;
+}
+
+.page-header__avatar {
+    width: 2rem;
+    height: 2rem;
+    background-color: #E5E7EB;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #374151;
+    font-weight: 600;
+}
+
+.page-main {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+/* ============================================================
+   STEP INDICATOR
+   ============================================================ */
+.step-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.step-indicator__item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.step-indicator__number {
+    width: 2rem;
+    height: 2rem;
+    background-color: #2563EB;
+    color: #FFFFFF;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+}
+
+.step-indicator__label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.step-indicator__divider {
+    width: 3rem;
+    height: 0.125rem;
+    background-color: #D1D5DB;
+}
+
+/* ============================================================
+   CARD / SECTION
+   ============================================================ */
+.card {
+    background-color: #FFFFFF;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    border: 1px solid #E5E7EB;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.card--top-margin {
+    margin-top: 1.5rem;
+}
+
+.card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.card__title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1F2937;
+    margin: 0;
+}
+
+.card__title--spaced {
+    margin-bottom: 1rem;
+}
+
+.pill {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+}
+
+.pill--gray {
+    background-color: #F3F4F6;
+    color: #4B5563;
+}
+
+.pill--green {
+    background-color: #DCFCE7;
+    color: #15803D;
+}
+
+.pill--blue {
+    background-color: #BFDBFE;
+    color: #1E40AF;
+}
+
+/* ============================================================
+   FORM
+   ============================================================ */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .form-grid__full {
+        grid-column: span 2 / span 2;
+    }
+}
+
+.form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.25rem;
+}
+
+.form-control {
+    width: 100%;
+    border: 1px solid #D1D5DB;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-family: inherit;
+    color: #111827;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 2px #3B82F6;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn--primary {
+    background-color: #2563EB;
+    color: #FFFFFF;
+    padding: 0.5rem 1.5rem;
+}
+
+.btn--primary:hover {
+    background-color: #1D4ED8;
+}
+
+.btn--secondary {
+    background-color: #F3F4F6;
+    color: #374151;
+    padding: 0.5rem 1rem;
+}
+
+.btn--secondary:hover {
+    background-color: #E5E7EB;
+}
+
+.btn--resolve {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    background-color: #16A34A;
+    color: #FFFFFF;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+}
+
+.btn--resolve:hover {
+    background-color: #15803D;
+}
+
+/* ============================================================
+   STATUS MESSAGE
+   ============================================================ */
+.status-message {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+}
+
+.status-message--green {
+    background-color: #F0FDF4;
+    color: #15803D;
+    border: 1px solid #BBF7D0;
+}
+
+.status-message--red {
+    background-color: #FEF2F2;
+    color: #B91C1C;
+    border: 1px solid #FECACA;
+}
+
+/* ============================================================
+   TWO-COLUMN OUTPUT SECTION
+   ============================================================ */
+.output-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .output-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.placeholder-text {
+    color: #6B7280;
+    font-style: italic;
+}
+
+.placeholder-text--sm {
+    font-size: 0.875rem;
+}
+
+/* ============================================================
+   DESK TABS
+   ============================================================ */
+.desk-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #E5E7EB;
+    padding-bottom: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.desk-tab {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    background-color: #F3F4F6;
+    color: #374151;
+    transition: background-color 0.2s ease;
+}
+
+.desk-tab:hover {
+    background-color: #E5E7EB;
+}
+
+.desk-tab.active {
+    background-color: #2563EB;
+    color: #FFFFFF;
+}
+
+.desk-panel-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* ============================================================
+   TICKET DETAILS (renders inside #ticketDetails)
+   ============================================================ */
+.ticket-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.ticket-summary__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ticket-id {
+    font-weight: 700;
+    color: #2563EB;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: #FEF9C3;
+    color: #854D0E;
+}
+
+.ticket-summary__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.label-muted {
+    color: #6B7280;
+}
+
+.ticket-summary__row {
+    font-size: 0.875rem;
+}
+
+.ticket-summary__body {
+    font-size: 0.875rem;
+    background-color: #F9FAFB;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    max-height: 6rem;
+    overflow-y: auto;
+}
+
+.ticket-summary__timestamp {
+    font-size: 0.75rem;
+    color: #9CA3AF;
+}
+
+/* ============================================================
+   ROUTING DETAILS (renders inside #routingDetails)
+   ============================================================ */
+.routing-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.routing-box {
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+}
+
+.routing-box--category {
+    background-color: #EFF6FF;
+}
+
+.routing-box--routed {
+    background-color: #F0FDF4;
+}
+
+.routing-box__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.routing-box__title {
+    font-weight: 500;
+}
+
+.routing-box--category .routing-box__title {
+    color: #1E40AF;
+}
+
+.routing-box--routed .routing-box__title {
+    color: #166534;
+}
+
+.routing-box__value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1E3A8A;
+    margin: 0.25rem 0 0 0;
+}
+
+.routing-box__value--green {
+    font-size: 1rem;
+    color: #14532D;
+}
+
+.routing-box__sub {
+    font-size: 0.875rem;
+    color: #4B5563;
+    margin: 0;
+}
+
+.routing-summary__footer {
+    font-size: 0.75rem;
+    color: #9CA3AF;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty-state {
+    text-align: center;
+    padding: 2rem 0;
+    color: #6B7280;
+}
+
+.empty-state__icon {
+    font-size: 2.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state__hint {
+    font-size: 0.75rem;
+}
+
+/* ============================================================
+   TICKET CARD (desk dashboard queue items)
+   ============================================================ */
+.ticket-card {
+    background-color: #F9FAFB;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.ticket-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.ticket-card__top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.ticket-card__subject {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1F2937;
+    margin: 0.25rem 0 0 0;
+}
+
+.ticket-card__meta {
+    font-size: 0.75rem;
+    color: #6B7280;
+    margin: 0;
+}
+
+.ticket-card__actions {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.ticket-card__assigned {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #4B5563;
+}
+
+/* ============================================================
+   FADE-IN ANIMATION
+   ============================================================ */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   DESK COLOR ACCENTS
+   ============================================================ */
+.desk-panel {
+    border-left: 4px solid #2563EB;
+}
+.desk-panel.scholarship { border-left-color: #8B5CF6; }
+.desk-panel.refund { border-left-color: #EC4899; }
+.desk-panel.fee { border-left-color: #2563EB; }
+
+
+
+/* ============================================================
+   MODAL POPUP OVERLAY BOX (COLOR MATCHED WITH SYSTEM SYSTEM)
+   ============================================================ */
+.modal-overlay {
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    background: rgba(17, 24, 39, 0.4); /* Matches text-gray-900 tint for a softer shadow look */
+    display: none; 
+    justify-content: center; 
+    align-items: center;
+    z-index: 1000; 
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background-color: #FFFFFF; /* Matches your background card white color */
+    color: #111827; /* Matches main text dark color */
+    padding: 1.5rem;
+    border-radius: 0.75rem; /* Matches card corner radiuses */
+    width: 90%; 
+    max-width: 550px; 
+    border: 1px solid #E5E7EB; /* Matches card system boundary grey color */
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border-bottom: 1px solid #E5E7EB; 
+    padding-bottom: 0.75rem; 
+    margin-bottom: 1rem; 
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1F2937; /* Matches card titles */
+}
+
+.close-btn { 
+    cursor: pointer; 
+    font-size: 1.5rem; 
+    color: #9CA3AF; /* Matches label muted text grey */
+    font-weight: bold; 
+    transition: color 0.2s ease;
+}
+
+.close-btn:hover { 
+    color: #111827; 
+}
+
+.modal-badges { 
+    display: flex; 
+    gap: 0.5rem; 
+    margin-bottom: 1rem; 
+}
+
+.badge { 
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px; /* Matches your pill class rules */
+    font-weight: 600;
+    background-color: #F3F4F6; /* Matches gray tab/pill backgrounds */
+    color: #4B5563;
+}
+
+/* Custom indicator color mapping values */
+.badge.resolved-status {
+    background-color: #DCFCE7; /* Matches your pill--green status color */
+    color: #15803D;
+}
+
+.badge.pending-status {
+    background-color: #FEF9C3; /* Matches your status-badge warning look */
+    color: #854D0E;
+}
+
+.text-orange { 
+    background-color: #EFF6FF; /* Matches blue classification boxes */
+    color: #1E40AF; 
+}
+
+.modal-meta { 
+    margin-bottom: 1rem; 
+    font-size: 0.875rem; 
+    color: #4B5563; /* Matches page body description text color */
+    line-height: 1.5; 
+}
+
+.modal-meta div {
+    margin-bottom: 0.25rem;
+}
+
+.modal-meta span { 
+    color: #111827; 
+    font-weight: 500;
+}
+
+.modal-subject-box {
+    margin-bottom: 1rem;
+}
+
+.subject-text { 
+    font-size: 0.875rem; 
+    font-weight: 600; 
+    margin-top: 0.25rem; 
+    color: #1F2937; 
+}
+
+.modal-body-box {
+    margin-bottom: 0.5rem;
+}
+
+.body-text { 
+    background-color: #F9FAFB; /* Matches ticket-summary__body gray block */
+    border: 1px solid #E5E7EB;
+    padding: 0.75rem; 
+    border-radius: 0.5rem; 
+    font-size: 0.875rem; 
+    line-height: 1.5; 
+    margin-top: 0.25rem; 
+    white-space: pre-wrap; 
+    max-height: 12rem; 
+    overflow-y: auto; 
+    color: #374151; 
+}

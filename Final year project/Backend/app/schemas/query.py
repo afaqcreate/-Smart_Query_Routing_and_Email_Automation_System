@@ -9,9 +9,17 @@ class QueryCreate(BaseModel):
     
     query_subject: str
 
-    query_body: str
+    # query_body: str
 
-    department: str
+    # query_subject: str
+
+    # query_body: str
+
+    # category: str
+
+    # status: str
+
+    # submitted_at: str
 
 
 class QueryResponse(BaseModel):
@@ -26,13 +34,13 @@ class QueryResponse(BaseModel):
 
     query_subject: str
 
-    query_body: str
+    # query_body: str
 
-    category: str
+    # category: str
 
-    status: str
+    # status: str
 
-    submitted_at: str
+    # submitted_at: str
 
 
     class Config:

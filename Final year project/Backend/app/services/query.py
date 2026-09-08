@@ -1,7 +1,9 @@
 from sqlalchemy.orm import Session
 
 from app.models.table import Query as tickets
-from app.schemas.query import QueryCreate
+
+from app.schemas.query import QueryCreate, QueryResponse
+from app.schemas.user import UserResponse
 
 # def categorize_ticket(ticket: QueryCreate):
 #     subject = ticket.subject.lower()
@@ -88,14 +90,15 @@ from app.schemas.query import QueryCreate
 def create_query(db: Session, ticket_data: QueryCreate):
 
 
-
     ticket = tickets(
+        # user_id=user_FK.user_id,
         student_id=ticket_data.student_id,
         email=ticket_data.email,
         query_subject=ticket_data.query_subject,
-        query_body=ticket_data.query_body,
-        department=ticket_data.department,
-
+        # query_body=ticket_data.query_body,
+        # category=ticket_data.category,
+        # status=ticket_data.status,
+        # submitted_at=ticket_data.submitted_at
     )
 
     db.add(ticket)

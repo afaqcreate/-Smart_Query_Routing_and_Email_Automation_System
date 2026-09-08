@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text
+from sqlalchemy.orm import relationship as Relationship
 
 PKT = timezone(timedelta(hours=5))
 
@@ -25,6 +26,7 @@ class User(Base):
 
     department = Column(String(59), nullable=False)
 
+    queries = Relationship("Query", back_populates="user", cascade="all, delete-orphan")
 
 
 class Query(Base):
@@ -33,7 +35,7 @@ class Query(Base):
 
     query_id = Column(Integer, primary_key=True, index=True)
 
-    user_id = Column(Integer, ForeignKey("users.user_id", ondelete= 'CASCADE'), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False, index=True)
 
     student_id = Column(String(50), nullable=False)
 
@@ -41,14 +43,15 @@ class Query(Base):
 
     query_subject = Column(String, nullable=False)
 
-    query_body = Column(String, nullable=False)
+    # query_body = Column(String, nullable=False)
 
-    category = Column(String(50), nullable=False)  # AI-assigned category (Fee, Result, Course, etc.)
+    # category = Column(String(50), nullable=False)  # AI-assigned category (Fee, Result, Course, etc.)
 
-    status = Column(String(20), default= "Pending", nullable=False)
+    # status = Column(String(20), default= "Pending", nullable=False)
 
-    submitted_at = Column(String(50), nullable=False)  # Submission timestamp
+    # submitted_at = Column(String(50), nullable=False)  # Submission timestamp
 
+    user = Relationship("User", back_populates="queries")
 
 
 class Route(Base):

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from sqlalchemy.orm import Session
 
@@ -41,5 +41,8 @@ def read_route(
     route_id: int,
     db: Session = Depends(get_db)
 ):
-
-    return get_route(db, route_id)
+    route = get_route(db, route_id)
+    if not route:
+        raise HTTPException(status_code=404, detail="Route not found")
+    
+    return route

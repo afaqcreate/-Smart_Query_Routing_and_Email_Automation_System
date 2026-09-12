@@ -7,22 +7,18 @@ class UserCreate(BaseModel):
 
     role: str
 
-    department: str
-
     email: str
 
 
 class UserResponse(BaseModel):
 
-    user_id: int
+    id: int
 
     name: str
 
     email: str
 
     role: str
-
-    department: str
 
 
     class Config:

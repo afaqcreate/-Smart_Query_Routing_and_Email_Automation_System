@@ -1,17 +1,13 @@
-from fastapi import APIRouter, Depends
-
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
-
 from app.schemas.query import QueryCreate, QueryResponse
-
 from app.services.query import (
     create_query,
     get_querys,
     get_query
 )
-
 
 router = APIRouter(
     prefix="/api/query",
@@ -22,9 +18,8 @@ router = APIRouter(
 @router.post("/", response_model=QueryResponse)
 def create_new_query(
     ticket: QueryCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db)  # Removed user: UserResponse = Depends(user)
 ):
-
     return create_query(db, ticket)
 
 
@@ -32,7 +27,6 @@ def create_new_query(
 def read_querys(
     db: Session = Depends(get_db)
 ):
-
     return get_querys(db)
 
 
@@ -41,5 +35,7 @@ def read_query(
     query_id: int,
     db: Session = Depends(get_db)
 ):
-
-    return get_query(db, query_id)
+    ticket = get_query(db, query_id)
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Query not found")
+    return ticket

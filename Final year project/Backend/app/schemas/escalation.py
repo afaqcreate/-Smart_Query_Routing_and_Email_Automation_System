@@ -5,8 +5,6 @@ class EscalationCreate(BaseModel):
 
     escalated_to: str
 
-    escalated_at: str
-
     reason: str
 
 

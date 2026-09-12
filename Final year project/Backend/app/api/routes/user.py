@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from sqlalchemy.orm import Session
 
@@ -41,5 +41,8 @@ def read_user(
     user_id: int,
     db: Session = Depends(get_db)
 ):
-
-    return get_user(db, user_id)
+    user = get_user(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return user

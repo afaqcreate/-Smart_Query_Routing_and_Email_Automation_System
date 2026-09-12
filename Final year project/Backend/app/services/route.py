@@ -7,8 +7,7 @@ from app.schemas.route import RouteCreate
 def create_route(db: Session, route_data: RouteCreate):
 
     route = Route(
-        destination=route_data.destination,
-        routed_at=route_data.routed_at
+        destination=route_data.destination
     )
 
     db.add(route)

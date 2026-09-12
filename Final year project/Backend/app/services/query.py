@@ -1,9 +1,8 @@
 from sqlalchemy.orm import Session
 
-from app.models.table import Query as tickets
+from app.models.table import Query as tickets, User as UserModel
 
-from app.schemas.query import QueryCreate, QueryResponse
-from app.schemas.user import UserResponse
+from app.schemas.query import QueryCreate
 
 # def categorize_ticket(ticket: QueryCreate):
 #     subject = ticket.subject.lower()
@@ -89,16 +88,25 @@ from app.schemas.user import UserResponse
 
 def create_query(db: Session, ticket_data: QueryCreate):
 
+    user = db.query(UserModel).filter(UserModel.email == ticket_data.email).first()
+
+    if not user:
+        user = UserModel(
+            email=ticket_data.email,
+            role="Student"
+        )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
 
     ticket = tickets(
-        # user_id=user_FK.user_id,
+        user_id=user.id,
         student_id=ticket_data.student_id,
         email=ticket_data.email,
         query_subject=ticket_data.query_subject,
-        # query_body=ticket_data.query_body,
-        # category=ticket_data.category,
-        # status=ticket_data.status,
-        # submitted_at=ticket_data.submitted_at
+        query_body=ticket_data.query_body,
+        category=ticket_data.category,
+        status=ticket_data.status,
     )
 
     db.add(ticket)
@@ -116,8 +124,8 @@ def get_querys(db: Session):
     return db.query(tickets).all()
 
 
-def get_query(db: Session, ticket_id: int):
-    if not ticket_id:
+def get_query(db: Session, query_id: int):
+    if not query_id:
         return None
     
-    return db.query(tickets).filter(tickets.ticket_id == ticket_id).first()
+    return db.query(tickets).filter(tickets.query_id == query_id).first()

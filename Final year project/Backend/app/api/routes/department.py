@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from sqlalchemy.orm import Session
 
@@ -42,4 +42,8 @@ def read_department(
     db: Session = Depends(get_db)
 ):
 
-    return get_department(db, department_id)
+    department = get_department(db, department_id)
+    if not department:
+        raise HTTPException(status_code=404, detail="Department not found")
+    
+    return department

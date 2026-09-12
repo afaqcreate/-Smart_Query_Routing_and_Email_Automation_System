@@ -10,7 +10,6 @@ def create_user(db: Session, user_data: UserCreate):
         name=user_data.name,
         email=user_data.email,
         role=user_data.role,
-        department= user_data.department
     )
 
     db.add(user)

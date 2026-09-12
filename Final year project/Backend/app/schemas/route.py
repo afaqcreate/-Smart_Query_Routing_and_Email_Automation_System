@@ -5,8 +5,6 @@ class RouteCreate(BaseModel):
 
     destination: str
 
-    routed_at: str
-
 
 class RouteResponse(BaseModel):
 
@@ -16,8 +14,7 @@ class RouteResponse(BaseModel):
 
     destination: str
 
-    routed_at: str
-
-
+    route_at: str
+    
     class Config:
         from_attributes = True  

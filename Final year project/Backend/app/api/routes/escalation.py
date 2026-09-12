@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from sqlalchemy.orm import Session
 
@@ -42,4 +42,8 @@ def read_escalation(
     db: Session = Depends(get_db)
 ):
 
-    return get_escalation(db, escalation_id)
+    escalation = get_escalation(db, escalation_id)
+    if not escalation:
+        raise HTTPException(status_code=404, detail="Escalation not found")
+    
+    return escalation

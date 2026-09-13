@@ -1,22 +1,12 @@
-from pydantic import BaseModel
-
-from datetime import datetime
-
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 class DepartmentCreate(BaseModel):
-
     name: str
-
-    contact_email: str
-
+    contact_email: EmailStr
 
 class DepartmentResponse(BaseModel):
-
     dept_id: int
-
     name: str
-
     contact_email: str
 
-    class Config:
-        from_attributes = True  
+    model_config = ConfigDict(from_attributes=True)

@@ -7,7 +7,9 @@ from app.services.user import create_user, get_users, get_user
 router = APIRouter(prefix="/api/user", tags=["User"])
 
 @router.post("/", response_model=UserResponse)
-def create_new_user(user_in: UserCreate, db: Session = Depends(get_db)): # Renamed ticket -> user_in
+def create_new_user(
+                    user_in: UserCreate, 
+                    db: Session = Depends(get_db)): # Renamed ticket -> user_in
     return create_user(db, user_in)
 
 @router.get("/", response_model=list[UserResponse])

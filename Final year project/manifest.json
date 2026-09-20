@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "My First VS Code Extension",
+  "version": "1.0",
+  "description": "A simple Chrome extension built in VS Code.",
+  "action": {
+    "default_popup": "frontend/AllScreens/01_Login/01_login.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "reload-extension": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+E",
+        "mac": "Command+Shift+E"
+      },
+      "description": "Reload the extension instantly"
+    }
+  }
+}

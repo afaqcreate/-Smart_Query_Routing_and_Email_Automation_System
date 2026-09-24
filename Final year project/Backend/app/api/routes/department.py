@@ -7,7 +7,7 @@ from app.services.department import create_department, get_departments, get_depa
 router = APIRouter(prefix="/api/department", tags=["Department"])
 
 @router.post("/", response_model=DepartmentResponse)
-def create_new_department(dept_in: DepartmentCreate, db: Session = Depends(get_db)): # Renamed ticket -> dept_in
+def create_new_department(dept_in: DepartmentCreate, db: Session = Depends(get_db)):
     return create_department(db, dept_in)
 
 @router.get("/", response_model=list[DepartmentResponse])

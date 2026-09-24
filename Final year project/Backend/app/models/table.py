@@ -13,7 +13,7 @@ class Department(Base):
     __tablename__ = "departments"
 
     dept_id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(50), unique=True, nullable=False)
+    name = Column(String(50), unique=True, nullable=True)
     contact_email = Column(String(150), nullable=False)
     
     users_relationship = Relationship("User", back_populates="department", cascade="all, delete-orphan")

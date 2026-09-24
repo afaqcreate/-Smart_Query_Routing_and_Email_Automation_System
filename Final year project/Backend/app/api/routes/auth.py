@@ -2,7 +2,6 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import RedirectResponse
 import httpx
 from app.config import *
-from database.base import Base
 from database.connection import SessionLocal
 from models.table import User
 
@@ -21,7 +20,6 @@ def login_with_google():
         "&prompt=select_account"
     )
     return RedirectResponse(url=google_auth_url)
-
 
 # STEP B: Google sends the user back here with an Auth Code
 @auth.get("/api/auth/google/callback")

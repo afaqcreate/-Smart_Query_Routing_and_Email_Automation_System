@@ -1,14 +1,36 @@
 {
   "manifest_version": 3,
-  "name": "My First VS Code Extension",
+  "name": "University Query Hub",
   "version": "1.0",
-  "description": "A simple Chrome extension built in VS Code.",
+  "description": "Student Query Management Extension",
   "action": {
     "default_popup": "frontend/AllScreens/01_Login/01_login.html"
   },
   "background": {
     "service_worker": "background.js"
   },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1:8000/*",
+    "https://mail.google.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["frontend/AllScreens/02_Student/02_student.js"],
+      "css": ["frontend/AllScreens/02_Student/02_student.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["frontend/AllScreens/02_Student/02_student.html"],
+      "matches": ["https://mail.google.com/*"]
+    }
+  ],
   "commands": {
     "reload-extension": {
       "suggested_key": {

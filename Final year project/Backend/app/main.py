@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 
 from app.api.routes.department import router as department_router
 from app.api.routes.escalation import router as escalation_router
@@ -28,7 +29,7 @@ app = FastAPI(
 # CORS Configuration for local frontend environments (like VS Code Live Server)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5500", "http://localhost:5500"], 
+    allow_origins=["http://127.0.0.1:5500", "http://localhost:5500", "chrome-extension://pnkjnajdkifhbadadepnkegehphdplnb"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -104,15 +105,34 @@ async def google_callback(code: str):
             )
 
         # 5. Access Granted: Return success or redirect to frontend dashboard
-        return {
-            "status": "success",
-            "message": "User verified successfully against PostgreSQL",
-            "user": {
-                "id": db_user.id,
-                "email": db_user.email,
-                "name": db_user.name
-            }
-        }
+        html_content = f"""
+        <html>
+            <body>
+                <h2>Authentication Successful!</h2>
+                <p>You can close this tab and return to Gmail.</p>
+                <script>
+                    // Send the user data to the extension background script
+                    if (typeof chrome !== 'undefined' && chrome.runtime) {{
+                        chrome.runtime.sendMessage({{
+                            action: "OAUTH_SUCCESS",
+                            user: {{
+                                id: "{db_user.id}",
+                                email: "{db_user.email}",
+                                name: "{db_user.name}",
+                                role: "{db_user.role}"
+                            }}
+                        }}, function(response) {{
+                            console.log("Extension received user data:", response);
+                            window.close(); // Close the tab automatically
+                        }});
+                    }} else {{
+                        console.log("Chrome runtime not found. Are you running this as an extension?");
+                    }}
+                </script>
+            </body>
+        </html>
+        """
+        return HTMLResponse(content=html_content)
 
     finally:
         db.close()

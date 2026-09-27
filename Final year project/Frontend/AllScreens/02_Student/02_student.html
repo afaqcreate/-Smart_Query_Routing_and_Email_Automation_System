@@ -1,11 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Form</title>
-</head>
-<body>
-    <h1>Welcome to student</h1>
-</body>
-</html>
+<!-- frontend/AllScreens/02_Student/02_student.html -->
+<div id="uquery-student-panel" class="uquery-panel hidden">
+  <!-- Header -->
+  <div class="panel-header">
+    <div class="header-title">
+      <span class="dot"></span> Student Query Hub
+    </div>
+    <button id="uquery-close-btn" class="close-btn">&times;</button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="panel-tabs">
+    <button class="tab-btn active" data-tab="tab-new-query">New Query</button>
+    <button class="tab-btn" data-tab="tab-history">History</button>
+  </div>
+
+  <!-- New Query Tab -->
+  <div id="tab-new-query" class="tab-content active">
+    <form id="query-form">
+      <div class="form-group">
+        <label for="query-subject">Subject</label>
+        <input type="text" id="query-subject" placeholder="e.g., Scholarship Application Status" required>
+      </div>
+      <div class="form-group">
+        <label for="query-body">Details</label>
+        <textarea id="query-body" rows="3" placeholder="Describe your issue..." required></textarea>
+      </div>
+      <!-- Note: File upload requires backend changes. Keeping it UI-only for now. -->
+      <div class="form-group">
+        <label for="query-file" class="file-label">
+          <span>📎 Attach Image/PDF</span>
+          <input type="file" id="query-file" accept="image/*,.pdf">
+        </label>
+        <span id="file-name" class="file-name"></span>
+      </div>
+      <button type="submit" class="submit-btn" id="submit-query-btn">Submit Query</button>
+    </form>
+  </div>
+
+  <!-- History Tab -->
+  <div id="tab-history" class="tab-content">
+    <div id="history-list" class="history-list">
+      <div class="loading-state">Loading history...</div>
+    </div>
+  </div>
+</div>

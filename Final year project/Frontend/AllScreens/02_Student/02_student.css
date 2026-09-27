@@ -1,0 +1,200 @@
+/* frontend/AllScreens/02_Student/02_student.css */
+.uquery-panel {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 360px;
+  height: 33vh;
+  min-height: 350px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.uquery-panel.hidden {
+  transform: translateY(120%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Header */
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.header-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: #202124;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-title .dot {
+  width: 8px;
+  height: 8px;
+  background-color: #34a853;
+  border-radius: 50%;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #5f6368;
+  cursor: pointer;
+}
+
+/* Tabs */
+.panel-tabs {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 13px;
+  font-weight: 500;
+  color: #5f6368;
+  cursor: pointer;
+}
+
+.tab-btn.active {
+  color: #1a73e8;
+  border-bottom-color: #1a73e8;
+}
+
+/* Content Areas */
+.tab-content {
+  display: none;
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #5f6368;
+  margin-bottom: 4px;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #dadce0;
+  border-radius: 6px;
+  font-size: 13px;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.file-label {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: #f1f3f4;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  color: #3c4043;
+  border: 1px dashed #dadce0;
+}
+
+.file-label input {
+  display: none;
+}
+
+.file-name {
+  font-size: 11px;
+  color: #1a73e8;
+  margin-left: 8px;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.submit-btn:hover {
+  background-color: #1557b0;
+}
+
+/* History List */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-item {
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.history-item-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.status-badge {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.status-pending { background: #fef7e0; color: #b06000; }
+.status-resolved { background: #e6f4ea; color: #137333; }
+
+.history-item-body {
+  font-size: 12px;
+  color: #5f6368;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

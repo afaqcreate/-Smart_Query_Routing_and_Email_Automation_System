@@ -1,22 +1,29 @@
+from collections.abc import Generator
+
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session, sessionmaker
 
 from app.config import DATABASE_URL
 
+if not DATABASE_URL:
+    raise RuntimeError(
+        "DATABASE_URL is missing. Create a .env file using .env.example."
+    )
 
-engine = create_engine(DATABASE_URL)
-
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,
+)
 
 SessionLocal = sessionmaker(
-    autocommit=False,
+    bind=engine,
     autoflush=False,
-    bind=engine
+    autocommit=False,
 )
 
 
-def get_db():
+def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
-
     try:
         yield db
     finally:

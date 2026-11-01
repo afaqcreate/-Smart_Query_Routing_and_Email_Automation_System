@@ -1,20 +1,34 @@
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.models.table import Escalation
-from app.schemas.escalation import EscalationCreate
+from app.schemas.subschemas import EscalationCreate
+from app.models.table import Query
+from fastapi import HTTPException, status
 
-def create_escalation(db: Session, escalation_data: EscalationCreate, query_id: int): # Added query_id argument
-    escalation = Escalation(
-        query_id=query_id, # Fixed missing foreign key
-        escalated_to=escalation_data.escalated_to,
-        reason=escalation_data.reason
+def create_escalation(db: Session, escalation_data: EscalationCreate):
+
+    # db.scalar(select(Query))
+    escalation = db.scalar(select(Query).where(Query.query_id == escalation_data.query_id))
+    time_escalation = db.scalar(select(Query.submitted_at))
+
+    if not escalation:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Query with ID '{escalation}' not found.",
+        )
+
+    db_escalation = Escalation(
+        query_id= escalation,
+        escalation= time_escalation
     )
-    db.add(escalation)
+    
+    db.add(db_escalation)
     db.commit()
-    db.refresh(escalation)
-    return escalation
+    db.refresh(db_escalation)
+    return db_escalation
 
-def get_escalations(db: Session):
-    return db.query(Escalation).all()
+def get_escalations(db: Session) -> list[Escalation]:
+    return list(db.scalars(select(Escalation)).all())
 
-def get_escalation(db: Session, escalation_id: int):
-    return db.query(Escalation).filter(Escalation.escalation_id == escalation_id).first() # Fixed to escalation_id
+def get_escalation(db: Session, escalation_id: int) -> Escalation | None:
+    return db.scalars(select(Escalation).where(Escalation.escalation_id == escalation_id)).first()

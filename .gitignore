@@ -1,3 +1,4 @@
 *.pyc
 Project prototype/backend/.env
 Final year project/Backend/.env
+/Final year project/Frontend/node_modules

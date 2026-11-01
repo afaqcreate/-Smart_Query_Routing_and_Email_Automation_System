@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Dashboard</title>
+    <link href="../../src/output.css" rel="stylesheet">
+    <script src="05_department.js" defer></script>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3663EB',
+                        bglight: '#F3F4F6',
+                        cardwhite: '#FFFFFF',
+                        accentlight: '#EFF6FF',
+                        borderblue: '#BFDBFE',
+                        successgreen: '#4EA44B',
+                        warningyellow: '#FDF9C3'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="05_department.css">
+</head>
+<body class="bg-bglight text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <div id="main-app" class="flex h-screen overflow-hidden">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-cardwhite border-r border-borderblue flex flex-col justify-between z-10 transition-all duration-300 shrink-0">
+            <div>
+                <!-- Brand / Logo -->
+                <div class="h-20 flex items-center px-6 border-b border-borderblue gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-lg shadow-sm">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-slate-900 block leading-tight">EduQuery</span>
+                        <span id="heading_id" class="text-xs text-slate-500 font-medium">Instructor Hub</span>
+                    </div>
+                </div>
+
+                <!-- Nav Links -->
+                <nav class="p-4 space-y-1.5">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition text-left bg-accentlight text-primary border border-borderblue/50">
+                        <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
+                    </button>
+                    <button onclick="switchTab('queries')" id="nav-queries" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition text-left text-slate-600 hover:bg-bglight">
+                        <i class="fa-solid fa-inbox w-5"></i> Student Queries
+                        <span id="pending-badge" class="ml-auto bg-primary text-white text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                    </button>
+                    <button onclick="switchTab('history')" id="nav-history" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition text-left text-slate-600 hover:bg-bglight">
+                        <i class="fa-solid fa-clock-rotate-left w-5"></i> Query History
+                    </button>
+                    <button onclick="switchTab('profile')" id="nav-profile" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition text-left text-slate-600 hover:bg-bglight">
+                        <i class="fa-solid fa-user-gear w-5"></i> My Profile
+                    </button>
+                </nav>
+            </div>
+
+            <!-- User quick info at bottom of sidebar -->
+            <div class="p-4 border-t border-borderblue">
+                <div class="flex items-center gap-3 p-2.5 bg-accentlight rounded-xl border border-borderblue">
+                    <div class="w-9 h-9 rounded-full bg-primary text-white font-semibold flex items-center justify-center text-sm shadow-sm" id="sidebar-initials">EV</div>
+                    <div class="overflow-hidden">
+                        <p class="text-xs font-bold text-slate-900 truncate" id="sidebar-name">Dr. Elena Vance</p>
+                        <p class="text-[10px] text-slate-500 truncate" id="sidebar-email">dr.elena.vance@university.edu</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            
+            <!-- Top Navigation Header -->
+            <header class="h-20 bg-cardwhite border-b border-borderblue px-8 flex items-center justify-between z-10 shadow-sm shrink-0">
+                <div class="flex items-center gap-4">
+                    <h2 id="page-title" class="text-xl font-bold text-slate-900">Dashboard Overview</h2>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2 bg-accentlight px-3.5 py-2 rounded-xl border border-borderblue text-xs text-slate-700 font-medium">
+                        <i class="fa-solid fa-calendar-days text-primary"></i>
+                        <span id="current-date-display">October 13, 2026</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Scrollable Workspace -->
+            <main class="flex-1 overflow-y-auto p-8 relative">
+                
+                <!-- TAB 1: DASHBOARD OVERVIEW -->
+                <section id="tab-content-dashboard" class="space-y-8">
+                    <!-- Statistics Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+                        <div class="bg-cardwhite p-6 rounded-2xl border border-borderblue shadow-sm flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Total Queries</span>
+                                <div class="w-10 h-10 rounded-xl bg-accentlight text-primary flex items-center justify-center font-bold text-sm border border-borderblue">
+                                    <i class="fa-solid fa-layer-group"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 id="stat-total" class="text-3xl font-extrabold text-slate-900">0</h3>
+                                <p class="text-xs text-slate-400 mt-1">All time received</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-cardwhite p-6 rounded-2xl border border-borderblue shadow-sm flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-bold uppercase tracking-wider text-amber-600">Pending</span>
+                                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-sm border border-amber-200">
+                                    <i class="fa-solid fa-hourglass-start"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 id="stat-pending" class="text-3xl font-extrabold text-amber-600">0</h3>
+                                <p class="text-xs text-slate-400 mt-1">Needs attention</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-cardwhite p-6 rounded-2xl border border-borderblue shadow-sm flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-bold uppercase tracking-wider text-primary">In-Progress</span>
+                                <div class="w-10 h-10 rounded-xl bg-accentlight text-primary flex items-center justify-center font-bold text-sm border border-borderblue">
+                                    <i class="fa-solid fa-spinner"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 id="stat-inprogress" class="text-3xl font-extrabold text-primary">0</h3>
+                                <p class="text-xs text-slate-400 mt-1">Currently under review</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-cardwhite p-6 rounded-2xl border border-borderblue shadow-sm flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-bold uppercase tracking-wider text-successgreen">Resolved</span>
+                                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-successgreen flex items-center justify-center font-bold text-sm border border-emerald-200">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 id="stat-resolved" class="text-3xl font-extrabold text-successgreen">0</h3>
+                                <p class="text-xs text-slate-400 mt-1">Successfully answered</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-cardwhite p-6 rounded-2xl border border-borderblue shadow-sm flex flex-col justify-between bg-gradient-to-br from-white to-amber-50/40">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-bold uppercase tracking-wider text-rose-600">Escalations (24h)</span>
+                                <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-sm border border-rose-200">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 id="stat-escalations" class="text-3xl font-extrabold text-rose-600">0</h3>
+                                <p class="text-xs text-rose-500 mt-1">Marked urgent past 24h</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Activity & Recent Queries Preview -->
+                    <div class="grid grid-cols-1 lg:grid-cols-1 gap-8">
+                        <div class="lg:col-span-2 bg-cardwhite rounded-2xl border border-borderblue p-6 shadow-sm">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="font-bold text-slate-900 text-base">Recent Student Queries</h3>
+                                <button onclick="switchTab('queries')" class="text-xs font-semibold text-primary hover:underline">View All Queries</button>
+                            </div>
+                            <div id="dashboard-recent-list" class="space-y-3">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 2: STUDENT QUERIES (INBOX / ACTION CENTER) -->
+                <section id="tab-content-queries" class="space-y-6 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-cardwhite p-4 rounded-2xl border border-borderblue shadow-sm">
+                        <div class="flex items-center gap-3 w-full sm:w-80">
+                            <div class="relative w-full">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                                <input type="text" id="query-search" oninput="filterQueries()" placeholder="Search student, category or keyword..."
+                                    class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-borderblue text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-bglight/50">
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+                            <button onclick="filterStatus('all')" id="filter-all" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-primary text-white transition shadow-sm">All</button>
+                            <!-- 🛠️ Fixed IDs to match script expectations -->
+                            <button onclick="filterStatus('pending')" id="filter-pending" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Pending</button>
+                            <button onclick="filterStatus('in_progress')" id="filter-in_progress" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">In-Progress</button>
+                            <button onclick="filterStatus('resolved')" id="filter-resolved" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Resolved</button>
+                        </div>
+                    </div>
+
+                    <!-- Queries List & Details Split View -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                        <!-- List -->
+                        <div class="lg:col-span-5 bg-cardwhite rounded-2xl border border-borderblue overflow-hidden shadow-sm">
+                            <div class="p-4 border-b border-borderblue bg-slate-50/50 flex items-center justify-between">
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Query Inbox</span>
+                                <span id="query-count-badge" class="text-xs font-bold text-slate-600 bg-white px-2.5 py-1 rounded-lg border border-borderblue">0 items</span>
+                            </div>
+                            <div id="queries-list-container" class="divide-y divide-borderblue max-h-[650px] overflow-y-auto">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Active Query Detailed View & Action panel -->
+                        <div class="lg:col-span-7 bg-cardwhite rounded-2xl border border-borderblue p-6 shadow-sm sticky top-8" id="query-detail-pane">
+                            <div id="no-query-selected" class="text-center py-20">
+                                <div class="w-16 h-16 bg-accentlight text-primary rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl border border-borderblue">
+                                    <i class="fa-solid fa-hand-pointer"></i>
+                                </div>
+                                <h3 class="font-bold text-slate-800 text-base">Select a Query</h3>
+                                <p class="text-sm text-slate-500 mt-1 max-w-sm mx-auto">Choose a student query from the inbox on the left to inspect documents, preview screenshots, and send responses.</p>
+                            </div>
+
+                            <div id="query-active-content" class="hidden space-y-6">
+                                <!-- Header info -->
+                                <div class="flex items-start justify-between pb-4 border-b border-borderblue">
+                                    <div>
+                                        <div class="flex items-center gap-2 mb-1 flex-wrap">
+                                            <span id="detail-category" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-accentlight text-primary border border-borderblue">Database</span>
+                                            <span id="detail-status-badge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">Pending</span>
+                                            <span id="detail-escalated" class="hidden text-xs font-bold px-2.5 py-1 rounded-lg bg-rose-50 text-rose-600 border border-rose-200">
+                                                <i class="fa-solid fa-triangle-exclamation mr-1"></i> Escalated (24h)
+                                            </span>
+                                        </div>
+                                        <h3 id="detail-subject" class="text-lg font-bold text-slate-900 mt-2">Query Title Here</h3>
+                                    </div>
+                                    <div class="text-right">
+                                        <span id="detail-date" class="text-xs text-slate-400 block">Oct 13, 2026</span>
+                                    </div>
+                                </div>
+
+                                <!-- Student info -->
+                                <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-borderblue">
+                                    <div id="detail-student-avatar" class="w-10 h-10 rounded-full bg-primary text-white font-bold flex items-center justify-center text-sm shadow-sm shrink-0">
+                                        JS
+                                    </div>
+                                    <div>
+                                        <h4 id="detail-student-name" class="font-bold text-sm text-slate-900">John Smith</h4>
+                                        <p id="detail-student-email" class="text-xs text-slate-500">john.smith@student.edu • Roll: CS-2023-45</p>
+                                    </div>
+                                </div>
+
+                                <!-- Query description -->
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Student Question / Details</label>
+                                    <div id="detail-description" class="text-sm text-slate-700 bg-bglight/60 p-4 rounded-xl border border-borderblue leading-relaxed">
+                                        Query text goes here...
+                                    </div>
+                                </div>
+
+                                <!-- Status Management Controls -->
+                                <div class="pt-4 border-t border-borderblue">
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Manual Status Management</label>
+                                    <div class="flex flex-wrap gap-3">
+                                        <button onclick="updateQueryStatus('in_progress')" id="btn-set-inprogress"
+                                            class="px-4 py-2 bg-accentlight hover:bg-blue-100 text-primary border border-borderblue rounded-xl text-xs font-bold transition flex items-center gap-2">
+                                            <i class="fa-solid fa-spinner"></i> Mark In-Progress
+                                        </button>
+                                        <button onclick="updateQueryStatus('resolved')" id="btn-set-resolved"
+                                            class="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-successgreen border border-emerald-200 rounded-xl text-xs font-bold transition flex items-center gap-2">
+                                            <i class="fa-solid fa-check"></i> Mark Resolved
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Reply & Notes Form -->
+                                <div class="pt-2">
+                                    <label id="reply-Box" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Instructor Reply</label>
+                                    <textarea id="instructor-reply-text" rows="3" placeholder="Type your detailed explanation or answer for the student here..."
+                                        class="w-full p-3.5 rounded-xl border border-borderblue text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-bglight/30 resize-none"></textarea>
+                                    <div class="flex justify-end mt-3">
+                                        <button onclick="submitInstructorReply()" class="px-5 py-2.5 bg-primary hover:bg-blue-700 text-white rounded-xl text-xs font-semibold transition shadow-md shadow-blue-500/20 flex items-center gap-2">
+                                            <i class="fa-solid fa-paper-plane"></i> Send Reply & Update
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 3: QUERY HISTORY & REPLIES -->
+                <section id="tab-content-history" class="space-y-6 hidden">
+                    <div class="bg-cardwhite p-6 rounded-2xl border border-borderblue shadow-sm">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-lg">Query History & Archives</h3>
+                                <p id="department-replies" class="text-sm text-slate-500 mt-1"></p>
+                            </div>
+                        </div>
+                        <div id="history-list-container" class="space-y-4">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 4: INSTRUCTOR PROFILE -->
+                <section id="tab-content-profile" class="space-y-6 hidden max-w-3xl mx-auto">
+                    <div class="bg-cardwhite rounded-2xl border border-borderblue overflow-hidden shadow-sm">
+                        <div class="h-32 bg-gradient-to-r from-primary to-blue-400 relative">
+                            <div class="absolute -bottom-10 left-8">
+                                <div class="w-20 h-20 rounded-2xl bg-cardwhite border-4 border-cardwhite shadow-md flex items-center justify-center text-primary font-bold text-2xl" id="profile-big-avatar">
+                                    EV
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-14 px-8 pb-8 space-y-6">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div>
+                                    <h3 id="profile-name" class="text-xl font-bold text-slate-900">Dr. Elena Vance</h3>
+                                    <p class="text-sm text-slate-500 flex items-center gap-2 mt-1">
+                                        <i class="fa-solid fa-briefcase text-primary"></i> <span id="profile-role">Senior Associate Professor</span>
+                                    </p>
+                                </div>
+                                <button id="logout_button" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition border border-borderblue flex items-center gap-2">
+                                    <svg xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+                                    </svg>
+
+                                    <span>Logout</span>
+                                </button>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-borderblue">
+                                <div class="bg-bglight/50 p-4 rounded-xl border border-borderblue">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Email Address</span>
+                                    <span id="profile-email" class="text-sm font-semibold text-slate-800">dr.elena.vance@university.edu</span>
+                                </div>
+                                <!-- <div class="bg-bglight/50 p-4 rounded-xl border border-borderblue">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">System Role ID</span>
+                                    <span id="profile-role-id" class="text-sm font-semibold text-slate-800">INST-PROF-9921</span> -->
+                                </div>
+                                <!-- <div class="bg-bglight/50 p-4 rounded-xl border border-borderblue">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Department</span>
+                                    <span class="text-sm font-semibold text-slate-800">Computer Science & Engineering</span>
+                                </div> -->
+                                <div class="bg-bglight/50 p-4 rounded-xl border border-borderblue">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Total Handled Queries</span>
+                                    <span id="profile-handled-count" class="text-sm font-semibold text-slate-800">142 Queries</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+</body>
+</html>

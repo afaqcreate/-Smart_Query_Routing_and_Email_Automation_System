@@ -9,9 +9,10 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 50vh;
+      min-height: 100vh;
       min-width: 100vh;
       background-color: #f4f6f9;
+      zoom: 0.9;
     }
 
     /* Centered Login Box */

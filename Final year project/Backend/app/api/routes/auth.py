@@ -1,75 +1,129 @@
-# from fastapi import FastAPI, HTTPException, status
-# from fastapi.responses import RedirectResponse
-# import httpx
-# from app.config import *
-# from database.connection import SessionLocal
-# from models.table import User
+import secrets
+from urllib.parse import urlencode
 
-# auth = FastAPI()
+import httpx
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi.responses import HTMLResponse, RedirectResponse
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-# # STEP A: Redirect user to Google with account chooser forced
-# @auth.get("/api/auth/google/login")
-# def login_with_google():
-#     # prompt=select_account forces Google to show the account list every time
-#     google_auth_url = (
-#         "https://accounts.google.com/o/oauth2/v2/auth?"
-#         f"client_id={GOOGLE_CLIENT_ID}"
-#         "&response_type=code"
-#         "&scope=openid%20email%20profile"
-#         f"&redirect_uri={REDIRECT_URI}"
-#         "&prompt=select_account"
-#     )
-#     return RedirectResponse(url=google_auth_url)
+from app.config import (
+    FRONTEND_ORIGIN,
+    GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET,
+    REDIRECT_URI,
+)
+from app.database.connection import get_db
+from app.models.table import User, Student
 
-# # STEP B: Google sends the user back here with an Auth Code
-# @auth.get("/api/auth/google/callback")
-# async def google_callback(code: str):
-#     db = SessionLocal()
-#     try:
-#         # 1. Exchange the code for Google Access Tokens
-#         token_url = "https://oauth2.googleapis.com/token"
-#         token_data = {
-#             "client_id": GOOGLE_CLIENT_ID,
-#             "client_secret": GOOGLE_CLIENT_SECRET,
-#             "code": code,
-#             "grant_type": "authorization_code",
-#             "redirect_uri": REDIRECT_URI,
-#         }
-        
-#         async with httpx.AsyncClient() as client:
-#             token_response = await client.post(token_url, data=token_data)
-#             token_json = token_response.json()
-#             access_token = token_json.get("access_token")
+oauth = APIRouter(prefix="/api/auth", tags=["Auth"])
+STATE_COOKIE = "google_oauth_state"
 
-#             # 2. Fetch authenticated user details from Google
-#             user_info_response = await client.get(
-#                 "https://www.googleapis.com/oauth2/v2/userinfo",
-#                 headers={"Authorization": f"Bearer {access_token}"}
-#             )
-#             google_user = user_info_response.json()
 
-#         user_email = google_user.get("email")
+@oauth.get("/google/login")
+def login_with_google():
+    if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+        raise HTTPException(status_code=500, detail="Google OAuth is not configured.")
+    state = secrets.token_urlsafe(32)
+    params = {
+        "client_id": GOOGLE_CLIENT_ID,
+        "response_type": "code",
+        "scope": "openid email profile",
+        "redirect_uri": REDIRECT_URI,
+        "prompt": "select_account",
+        "state": state,
+    }
+    response = RedirectResponse(
+        url="https://accounts.google.com/o/oauth2/v2/auth?" + urlencode(params)
+    )
+    response.set_cookie(
+        STATE_COOKIE,
+        state,
+        httponly=True,
+        secure=REDIRECT_URI.startswith("https://"),
+        samesite="lax",
+        max_age=600,
+    )
+    return response
 
-#         # 3. Check PostgreSQL Database for the email
-#         db_user = db.query(User).filter(User.email == user_email).first()
 
-#         # 4. If account does NOT exist in database, raise error
-#         if not db_user:
-#             raise HTTPException(
-#                 status_code=status.HTTP_403_FORBIDDEN,
-#                 detail=f"Access denied. Email {user_email} is not registered in the system."
-#             )
+@oauth.get("/google/callback", response_class=HTMLResponse)
+def google_callback(
+    request: Request,
+    code: str = Query(...),
+    state: str = Query(...),
+    db: Session = Depends(get_db),
+):
+    expected_state = request.cookies.get(STATE_COOKIE)
+    if not expected_state or not secrets.compare_digest(state, expected_state):
+        raise HTTPException(status_code=400, detail="Invalid OAuth state. Please try logging in again.")
 
-#         # 5. Access Granted: Return success or redirect to frontend dashboard
-#         return {
-#             "status": "success",
-#             "message": "User verified successfully against PostgreSQL",
-#             "user": {
-#                 "id": db_user.id,
-#                 "email": db_user.email,
-#                 "name": db_user.name
-#             }
-#         }
+    if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+        raise HTTPException(status_code=500, detail="Google OAuth is not configured.")
 
-#     finally:
-#         db.close()
+    try:
+        with httpx.Client(timeout=10.0) as client:
+            token_response = client.post(
+                "https://oauth2.googleapis.com/token",
+                data={
+                    "client_id": GOOGLE_CLIENT_ID,
+                    "client_secret": GOOGLE_CLIENT_SECRET,
+                    "code": code,
+                    "grant_type": "authorization_code",
+                    "redirect_uri": REDIRECT_URI,
+                },
+            )
+            token_response.raise_for_status()
+            access_token = token_response.json().get("access_token")
+            if not access_token:
+                raise HTTPException(status_code=400, detail="Google did not return an access token.")
+
+            profile_response = client.get(
+                "https://openidconnect.googleapis.com/v1/userinfo",
+                headers={"Authorization": f"Bearer {access_token}"},
+            )
+            profile_response.raise_for_status()
+            profile = profile_response.json()
+    except httpx.HTTPError as exc:
+        raise HTTPException(status_code=502, detail="Google authentication request failed.") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=502, detail="Google returned an invalid response.") from exc
+
+    user_email = profile.get("email")
+    if not user_email or not profile.get("email_verified", False):
+        raise HTTPException(status_code=403, detail="Google account email could not be verified.")
+
+    db_user = db.scalar(select(Student).where(Student.email == user_email))
+    if db_user is None:
+        db_user = db.scalar(select(User).where(User.email == user_email))
+
+    if db_user is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="This Google account is not registered in the system.",
+        )
+
+    import json
+    user_payload = json.dumps(
+        {"id": db_user.id, "name": db_user.name, "email": db_user.email, "role": db_user.role, "roll_number": getattr(db_user, "roll_number", None) }
+    ).replace("<", "\\u003c")
+
+    html_content = f"""<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Google sign-in</title></head>
+<body>
+<p>Authentication complete. This window should close automatically.</p>
+<script>
+  if (window.opener) {{
+    window.opener.postMessage({{
+      type: "GOOGLE_AUTH_SUCCESS",
+      user: {user_payload}
+    }}, {json.dumps(FRONTEND_ORIGIN)});
+    window.close();
+  }}
+</script>
+</body>
+</html>"""
+    response = HTMLResponse(content=html_content)
+    response.delete_cookie(STATE_COOKIE)
+    return response

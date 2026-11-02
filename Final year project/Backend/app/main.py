@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -12,13 +13,24 @@ from app.api.routes.automation import automat
 from app.config import FRONTEND_ORIGIN
 from app.database.base import Base
 from app.database.connection import engine
-# Import models so SQLAlchemy registers every table before create_all.
-from app.models import table as _models  # noqa: F401
+from app.models import table as _models
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("✅ Cloud Database tables verified/created successfully.")
+    except Exception as e:
+        print(f"❌ Database connection failed during startup: {e}")
+    yield
+
 
 app = FastAPI(
     title="Student Query Management API",
     version="1.0.0",
     description="Backend API for university query management and routing.",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -27,15 +39,12 @@ app.add_middleware(
         FRONTEND_ORIGIN,
         "http://localhost:5500",
         "http://127.0.0.1:5500",
-        
     ],
     allow_credentials=True,
-    allow_methods=["DELETE", "POST", "GET", "OPTIONS", "PATCH"], 
+    allow_methods=["DELETE", "POST", "GET", "OPTIONS", "PATCH"],
     allow_headers=["Authorization", "Content-Type"],
 )
 
-# Convenient for local development. Use Alembic migrations in production.
-Base.metadata.create_all(bind=engine)
 
 app.include_router(oauth)
 app.include_router(user)

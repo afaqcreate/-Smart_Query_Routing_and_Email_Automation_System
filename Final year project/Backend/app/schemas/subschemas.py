@@ -8,7 +8,7 @@ from app.schemas.base import BaseResponseSchema, BaseModel
 class MessageCreate(BaseModel):
     sender_id: int
     message_body: str
-    status: Optional[str] = "in_progress"
+    status: Optional[str] = Field(default="in_progress")
 
 class MessageResponse(BaseModel):
     message_id: int
@@ -44,7 +44,6 @@ class StudentCreate(BaseResponseSchema):
     role: str = Field(min_length=1, max_length=50, default="student")
     email: EmailStr
     roll_number: str
-    # update: Optional[updatecreateUser] = None
 
 
 class StudentResponse(BaseResponseSchema):
@@ -95,7 +94,7 @@ class EscalationResponse(BaseResponseSchema):
 
 class QueryCreate(BaseResponseSchema):
     user_id: int = Field(gt=0)
-    student_id: int = Field(gt=0) # This is temporary
+    student_id: int = Field(gt=0)
     query_subject: str = Field(min_length=1)
     query_body: str = Field(min_length=1)
 

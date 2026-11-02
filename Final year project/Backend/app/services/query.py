@@ -6,23 +6,26 @@ from sqlalchemy.orm import Session
 from app.models.table import Query, User
 from app.models.table import QueryMessage
 
-from app.schemas.subschemas import QueryCreate, MessageCreate
+from app.schemas.subschemas import QueryCreate, MessageCreate, MessageResponse
 
 def add_query_message(db: Session, query_id: int, payload: MessageCreate):
     query = db.query(Query).filter(Query.query_id == query_id).first()
     if not query:
         raise HTTPException(status_code=404, detail="Query not found")
 
-    # 2. Create and store the new message record
     new_message = QueryMessage(
         query_id=query.query_id,
         sender_id=payload.sender_id,
         sender_role=query.user.role,
         message_body=payload.message_body
     )
-    db.add(new_message)
 
-    # 3. Optionally update query status if provided
+    new_query = Query(
+        role = MessageResponse.message_id
+    )
+
+    db.add(new_message, new_query)
+
     if payload.status:
         query.status = payload.status
 

@@ -1,5 +1,5 @@
 // --- CONSTANTS & STATE STORAGE ---
-const API_BASE = "http://20.196.197.202:8000/api";
+const API_BASE = "http://127.0.0.1:8000/api";
 
 // 1. Get and parse the session from localStorage
 const storedSession = localStorage.getItem("user_session");
@@ -38,7 +38,9 @@ document.getElementById("heading_id").innerText = user.role.toUpperCase()
 // 1. Fetch Instructor Profile dynamically using the logged-in user's ID
 async function fetchInstructorProfile() {
     try {
+        setGlobalLoading(true)
         const response = await fetch(`${API_BASE}/user/${user.id}`);
+        setGlobalLoading(false)
         if (response.ok) {
             instructorProfile = await response.json();
         }
@@ -50,7 +52,9 @@ async function fetchInstructorProfile() {
 // 2. Fetch Escalations history via /api/escalation/
 async function fetchEscalationsData() {
     try {
+        setGlobalLoading(true)
         const response = await fetch(`${API_BASE}/escalation/`);
+        setGlobalLoading(false)
         if (response.ok) {
             escalationsData = await response.json();
         }
@@ -62,7 +66,9 @@ async function fetchEscalationsData() {
 // 3. Fetch Queries via /api/query/ with robust nested student mapping
 async function fetchQueriesData() {
     try {
+        setGlobalLoading(true)
         const response = await fetch(`${API_BASE}/query/`);
+        setGlobalLoading(false)
         if (response.ok) {
             const rawQueries = await response.json();
             
@@ -303,12 +309,13 @@ async function updateQueryStatus(newStatus) {
     if (!q) return;
 
     try {
+        setGlobalLoading(true)
         const response = await fetch(`${API_BASE}/query/${q.numericId}/status`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ status: newStatus.toLowerCase() })
         });
-
+        setGlobalLoading(false)
         if (response.ok) {
             q.status = newStatus.toLowerCase();
             refreshAllData();
@@ -334,6 +341,7 @@ async function submitInstructorReply() {
     }
 
     try {
+        setGlobalLoading(true)
         const response = await fetch(`${API_BASE}/query/${q.numericId}/status`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
@@ -342,6 +350,7 @@ async function submitInstructorReply() {
                 status: "resolved"
             })
         });
+        setGlobalLoading(false)
 
         if (response.ok) {
             q.reply = replyText;

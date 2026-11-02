@@ -1,13 +1,22 @@
-const URL = "http://20.196.197.202:8000/api";
+const URL = "http://127.0.0.1:8000/api";
 const button = document.querySelector('.btn-container');
 
 if (button) {
   button.addEventListener('click', () => {
-    // 🚀 FIXED: Open the login route cleanly in a popup browser window
-    window.open(`${URL}/auth/google/login`, "_blank", "width=500,height=600");
+    setGlobalLoading(true);
+    
+    // Open the login route cleanly in a popup browser window
+    const authWindow = window.open(`${URL}/auth/google/login`, "_blank", "width=500,height=600");
+
+    // 🛡️ Safety fallback: If user closes the popup manually, reset loading state
+    const checkClosed = setInterval(() => {
+      if (authWindow && authWindow.closed) {
+        clearInterval(checkClosed);
+        setGlobalLoading(false);
+      }
+    }, 1000);
   });
 }
-
 
 // 🎯 LISTEN FOR THE BACKEND MESSAGE DYNAMICALLY
 window.addEventListener("message", (event) => {
@@ -18,35 +27,23 @@ window.addEventListener("message", (event) => {
         // Save session locally to memory spaces
         localStorage.setItem("user_session", JSON.stringify(userdata));
 
-        // Redirect your main dashboard page immediately!
-        if (userdata.role == "student") {
+        // Stop loading state before redirecting
+        setGlobalLoading(false);
+
+        // Redirect your main dashboard page immediately based on role!
+        const role = (userdata.role || "").toLowerCase();
+
+        if (role === "student") {
           window.location.href = "../02_Student/02_student.html";
-        } else if(userdata.role == "instructor"){
+        } else if (role === "instructor" || role === "it department" || role === "registrar department" || role === "exam department" || role === "finance department") {
           window.location.href = "../05_department/05_department.html";
-
-        } else if(userdata.role == "head of department"){
+        } else if (role === "head of department") {
           window.location.href = "../04_hod/04_hod.html";
-
-        } else if(userdata.role == "it department"){
-          window.location.href = "../05_department/05_department.html";
-
-        } else if(userdata.role == "registrar department"){
-          window.location.href = "../05_department/05_department.html";
-
-        } else if(userdata.role == "exam department"){
-          window.location.href = "../05_department/05_department.html";
-
-        } else if(userdata.role == "finance department"){
-          window.location.href = "../05_department/05_department.html";
-
-        } else if(userdata.role == "admin"){
+        } else if (role === "admin") {
           window.location.href = "../06_admin/06_admin.html";
-
-        }else {
-          console.log(Error);
+        } else {
+          console.error("Unknown user role:", userdata.role);
+          setGlobalLoading(false);
         }
     }
 });
-
-
-

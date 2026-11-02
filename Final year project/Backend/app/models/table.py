@@ -41,7 +41,6 @@ class User(Base):
         passive_deletes=True,
     )
     
-    # 👈 Added back-populates link for QueryMessage
     messages: Mapped[list["QueryMessage"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
@@ -94,7 +93,6 @@ class Query(Base):
         passive_deletes=True,
     )
     
-    # 👈 Cleaned up: Single list relationship matching QueryMessage
     messages: Mapped[list["QueryMessage"]] = relationship(
         back_populates="query",
         cascade="all, delete-orphan",
@@ -151,9 +149,8 @@ class QueryMessage(Base):
     message_id: Mapped[int] = mapped_column(primary_key=True, index=True)
     query_id: Mapped[int] = mapped_column(ForeignKey("queries.query_id", ondelete="CASCADE"), nullable=False)
     sender_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False) 
-    sender_role: Mapped[str] = mapped_column(String(50), nullable=False) # Changed Text to String(50) for consistency
+    sender_role: Mapped[str] = mapped_column(String(50), nullable=False)
     
-    # 👈 Fixed: Python type `str` goes inside Mapped[], SQLAlchemy type goes in mapped_column()
     message_body: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     
     sent_at: Mapped[datetime] = mapped_column(
@@ -163,6 +160,5 @@ class QueryMessage(Base):
         nullable=False
     )
 
-    # Relationships back to Query and User
     query: Mapped["Query"] = relationship(back_populates="messages")
     user: Mapped["User"] = relationship(back_populates="messages")

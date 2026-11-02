@@ -1,6 +1,6 @@
 // API Configuration Constants
-const API_BASE_URL = "http://20.196.197.202:8000/api/admin";
-const API_BASE_URL_QUERY = "http://20.196.197.202:8000/api";
+const API_BASE_URL = "http://127.0.0.1:8000/api/admin";
+const API_BASE_URL_QUERY = "http://127.0.0.1:8000/api";
 const QUERY_API_URL = `${API_BASE_URL_QUERY}/query`;
 const ADMIN_API_URL = `${API_BASE_URL}/`;
 
@@ -38,7 +38,9 @@ async function refreshData() {
 // API Request 1: Fetch All Queries
 async function fetchQueries() {
     try {
+        setGlobalLoading(true)
         const res = await fetch(`${QUERY_API_URL}/`);
+        setGlobalLoading(false)
         if (!res.ok) throw new Error(`Query API error: ${res.status}`);
         const data = await res.json();
         state.queries = [data];
@@ -52,7 +54,9 @@ async function fetchQueries() {
 // API Request 2: Fetch Combined Users & Students
 async function fetchUsers() {
     try {
+        setGlobalLoading(true)
         const res = await fetch(ADMIN_API_URL);
+        setGlobalLoading(false)
         if (!res.ok) throw new Error(`Admin API error: ${res.status}`);
         const data = await res.json();
         state.users = data;
@@ -410,7 +414,9 @@ function filterQueries() {
 // Open Query Modal & Single GET Fetch
 async function openQueryModal(queryId) {
     try {
+        setGlobalLoading(true)
         const res = await fetch(`${QUERY_API_URL}/${queryId}`);
+        setGlobalLoading(false)
         if (!res.ok) throw new Error(`Query details fetch failed with status ${res.status}`);
         const q = await res.json();
         state.activeQuery = q;
@@ -474,6 +480,7 @@ async function saveQueryUpdate() {
     }
 
     try {
+        setGlobalLoading(true)
         const patchRes = await fetch(`${QUERY_API_URL}/${queryId}/status`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
@@ -482,6 +489,7 @@ async function saveQueryUpdate() {
                 reply: newReply
             })
         });
+        setGlobalLoading(false)
         if (!patchRes.ok) throw new Error("Could not update query status/reply.");
 
         showToast(`Query #${queryId} updated to status '${newStatus}'`);
@@ -568,7 +576,9 @@ async function handleAddUserSubmit(event) {
     }
 
     try {
+        setGlobalLoading(true)
         const targetUrl = `${API_BASE_URL}/create`;
+        setGlobalLoading(false)
         const Response = await fetch(targetUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -631,11 +641,13 @@ async function handleDeleteUserSubmit(event) {
     }
 
     try {
+        setGlobalLoading(true)
         const res = await fetch(`${API_BASE_URL}/delete`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
+        setGlobalLoading(false)
 
         if (!res.ok) {
             const errData = await res.json().catch(() => ({}));

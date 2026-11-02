@@ -29,7 +29,6 @@ async def create_and_route_query(payload: QueryPayload, db: Session = Depends(ge
     Return ONLY the department name, with no extra text or punctuation.
     """
 
-# Set a valid default department as a fallback
     assigned_department = "Admin"
 
     valid_departments = [
@@ -40,7 +39,7 @@ async def create_and_route_query(payload: QueryPayload, db: Session = Depends(ge
         "Registrar Department",
         "Exam Department",
         "Head Of Department",
-        "General",  # <-- Include it here if you want to keep "General"
+        "General",  
     ]
 
     try:

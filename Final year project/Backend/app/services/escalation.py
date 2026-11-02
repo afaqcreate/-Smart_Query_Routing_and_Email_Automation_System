@@ -7,7 +7,6 @@ from fastapi import HTTPException, status
 
 def create_escalation(db: Session, escalation_data: EscalationCreate):
 
-    # db.scalar(select(Query))
     escalation = db.scalar(select(Query).where(Query.query_id == escalation_data.query_id))
     time_escalation = db.scalar(select(Query.submitted_at))
 

@@ -1,5 +1,5 @@
 // --- CONSTANTS & STATE STORAGE ---
-const API_BASE = "http://20.196.197.202:8000/api";
+const API_BASE = "http://127.0.0.1:8000/api";
 
 const storedSession = localStorage.getItem("user_session");
 let user = null;
@@ -85,6 +85,7 @@ function switchTab(tabId) {
 
 async function fetchQueriesforstudent() {
     try {
+        setGlobalLoading(true)
         const response = await fetch(`${API_BASE}/query/`);
         if (response.ok) {
             const data = await response.json();
@@ -99,6 +100,7 @@ async function fetchQueriesforstudent() {
 
             renderQueries();
             updateStats();
+            await setGlobalLoading(false)
         } else {
             console.error("Failed to fetch queries from backend");
         }
@@ -126,6 +128,7 @@ async function handleQuerySubmit(e) {
     };
 
     try {
+        setGlobalLoading(true)
         const response = await fetch(`${API_BASE}/query/ai`, {
             method: "POST",
             headers: {
@@ -144,6 +147,7 @@ async function handleQuerySubmit(e) {
             resetForm();
             
             await fetchQueriesforstudent(); // Re-fetch and sort latest records
+            await setGlobalLoading(false)
         } else {
             alert("Failed to submit query to backend.");
         }
@@ -165,6 +169,7 @@ async function submitFollowUp() {
             status: "in_progress"
         };
 
+        setGlobalLoading(true)
         const response = await fetch(`${API_BASE}/query/${activeQueryId}/messages`, {
             method: "PATCH",
             headers: {
@@ -172,11 +177,12 @@ async function submitFollowUp() {
             },
             body: JSON.stringify(payload)
         });
-
+        setGlobalLoading(false)
         if (response.ok) {
             input.value = "";
             await fetchQueriesforstudent();
             openQueryModal(activeQueryId);
+            await setGlobalLoading(false)
         } else {
             alert("Failed to send reply.");
         }

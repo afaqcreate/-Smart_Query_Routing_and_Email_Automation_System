@@ -1,0 +1,19 @@
+create a new webapp page for Instructor from reicive student queries
+there are some featrue
+
+1. Instructor see student queries
+2. their can see student query history and  replys the query
+3. there are dashborad page 
+4. and you gave the query id for easyly store on Database like #ATC - 1234
+5. their can see own profile like name, Roll number, Email, and log out button
+
+Color
+#3663EB
+#F3F4F6
+#FFFFFF
+#EFF6FF
+#BFDBFE
+#4EA44B
+#FDF9C3
+
+language HTML, CSS, and js different pages

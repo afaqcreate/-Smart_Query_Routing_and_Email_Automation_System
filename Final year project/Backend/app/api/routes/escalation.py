@@ -15,7 +15,6 @@ def check_and_auto_escalate(db: Session):
     now = datetime.now(timezone.utc)
     cutoff = now - timedelta(hours=24)
     
-    # Find all queries that are unresolved (pending or in_progress) and submitted > 24 hours ago
     unresolved_queries = db.query(Query).filter(
         Query.status.in_(["pending", "in_progress"]),
         Query.submitted_at <= cutoff
@@ -46,7 +45,6 @@ def create_new_escalation(
 
 @escalation.get("/", response_model=list[EscalationResponse])
 def read_escalations(db: Session = Depends(get_db)):
-    # 🌟 Trigger 24-hour auto-escalation check on fetch
     check_and_auto_escalate(db)
     return get_escalations(db)
 

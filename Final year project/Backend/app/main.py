@@ -66,5 +66,6 @@ def root():
 
 
 @app.get("/health", tags=["Health"])
+@app.get("/healthz", tags=["Health"])
 def health():
     return {"status": "ok"}

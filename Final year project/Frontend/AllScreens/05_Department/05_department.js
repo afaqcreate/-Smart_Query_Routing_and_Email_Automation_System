@@ -25,6 +25,45 @@ let currentActiveQueryId = null;
 let currentFilterStatus = 'all';
 let deptPollTimer = null;
 
+// --- SEEN MESSAGE TRACKER FOR DEPARTMENT OFFICER ---
+function getDeptSeenMessagesMap() {
+    try {
+        const id = user?.id || 'dept';
+        return JSON.parse(localStorage.getItem(`seen_msgs_dept_${id}`) || '{}');
+    } catch (e) {
+        return {};
+    }
+}
+
+function markDeptQueryAsSeen(queryId, latestMsgId) {
+    if (!queryId) return;
+    try {
+        const id = user?.id || 'dept';
+        const key = `seen_msgs_dept_${id}`;
+        const map = getDeptSeenMessagesMap();
+        const val = String(latestMsgId || Date.now());
+        map[queryId] = val;
+        const num = String(queryId).replace(/\D/g, '');
+        if (num) map[num] = val;
+        localStorage.setItem(key, JSON.stringify(map));
+    } catch (e) {}
+}
+
+function hasUnseenStudentMessageForDept(q) {
+    if (!q) return false;
+    const msgs = q.messages || [];
+    if (msgs.length === 0) return false;
+    const latest = msgs[msgs.length - 1];
+    const isFromStudent = (latest.sender_role || '').toLowerCase() === 'student';
+    if (!isFromStudent) return false;
+
+    const latestId = String(latest.message_id || latest.sent_at || latest.message_body || '1');
+    const seenMap = getDeptSeenMessagesMap();
+    const qId = q.numericId || q.query_id || q.id;
+    const num = String(qId).replace(/\D/g, '');
+    return seenMap[qId] !== latestId && (!num || seenMap[num] !== latestId);
+}
+
 function escapeHtml(str) {
     if (!str) return '';
     return String(str)
@@ -275,8 +314,7 @@ function renderQueriesList() {
     container.innerHTML = filtered.map(q => {
         const msgList = q.messages || [];
         const msgCount = msgList.length || (q.reply ? 1 : 0);
-        const latestMsg = msgList.length > 0 ? msgList[msgList.length - 1] : null;
-        const hasNewStudentMsg = latestMsg ? (latestMsg.sender_role || '').toLowerCase() === 'student' : false;
+        const hasNewStudentMsg = hasUnseenStudentMessageForDept(q);
 
         return `
             <div onclick="selectQuery('${q.id}')" class="p-4 cursor-pointer transition hover:bg-slate-50 ${currentActiveQueryId === q.id ? 'bg-accentlight/60 border-l-4 border-primary' : ''}">
@@ -306,6 +344,18 @@ function selectQuery(id) {
     const q = instcuqueriesData.find(item => item.id === id);
     if (!q) return;
 
+    // Immediately mark query as seen and clear notification badge
+    const msgList = q.messages || [];
+    const latest = msgList.length > 0 ? msgList[msgList.length - 1] : null;
+    if (latest) {
+        const latestId = String(latest.message_id || latest.sent_at || latest.message_body || '1');
+        markDeptQueryAsSeen(q.numericId || q.id, latestId);
+    }
+    const newMsgBadge = document.getElementById("detail-new-msg-badge");
+    if (newMsgBadge) {
+        newMsgBadge.classList.add("hidden");
+    }
+
     renderQueriesList();
 
     const noQueryEl = document.getElementById('no-query-selected');
@@ -328,12 +378,14 @@ function selectQuery(id) {
     }
 
     const msgList = q.messages || [];
-    const latestMsg = msgList.length > 0 ? msgList[msgList.length - 1] : null;
-    const hasNewStudentMsg = latestMsg ? (latestMsg.sender_role || '').toLowerCase() === 'student' : false;
+    const latest = msgList.length > 0 ? msgList[msgList.length - 1] : null;
+    if (latest) {
+        const latestId = String(latest.message_id || latest.sent_at || latest.message_body || '1');
+        markDeptQueryAsSeen(q.numericId || q.id, latestId);
+    }
     const newMsgBadge = document.getElementById("detail-new-msg-badge");
     if (newMsgBadge) {
-        if (hasNewStudentMsg) newMsgBadge.classList.remove("hidden");
-        else newMsgBadge.classList.add("hidden");
+        newMsgBadge.classList.add("hidden");
     }
     const countText = document.getElementById("detail-chat-count-text");
     if (countText) {
@@ -373,11 +425,13 @@ async function loadDepartmentChatMessages(queryId, silent = false) {
             }
             const msgs = data.messages || [];
             const latestMsg = msgs.length > 0 ? msgs[msgs.length - 1] : null;
-            const hasNewStudentMsg = latestMsg ? (latestMsg.sender_role || '').toLowerCase() === 'student' : false;
+            if (latestMsg) {
+                const latestId = String(latestMsg.message_id || latestMsg.sent_at || latestMsg.message_body || '1');
+                markDeptQueryAsSeen(numericId, latestId);
+            }
             const newMsgBadge = document.getElementById("detail-new-msg-badge");
             if (newMsgBadge) {
-                if (hasNewStudentMsg) newMsgBadge.classList.remove("hidden");
-                else newMsgBadge.classList.add("hidden");
+                newMsgBadge.classList.add("hidden");
             }
             const countText = document.getElementById("detail-chat-count-text");
             if (countText) {

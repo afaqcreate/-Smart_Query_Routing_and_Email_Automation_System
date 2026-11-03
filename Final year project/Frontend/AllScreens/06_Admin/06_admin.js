@@ -15,6 +15,10 @@ let state = {
 };
 
 let currentUser = null;
+try {
+    const raw = localStorage.getItem("user_session");
+    if (raw) currentUser = JSON.parse(raw);
+} catch (e) {}
 let adminPollTimer = null;
 
 function escapeHtml(str) {
@@ -35,6 +39,40 @@ function formatChatTime(dateStr) {
     } catch (e) {
         return "";
     }
+}
+
+// --- SEEN MESSAGE TRACKER (Clears notification bell when message is viewed) ---
+function getAdminSeenMessagesMap() {
+    try {
+        const id = currentUser?.id || 'admin';
+        return JSON.parse(localStorage.getItem(`seen_msgs_admin_${id}`) || '{}');
+    } catch (e) {
+        return {};
+    }
+}
+
+function markAdminQueryAsSeen(queryId, latestMsgId) {
+    if (!queryId) return;
+    try {
+        const id = currentUser?.id || 'admin';
+        const key = `seen_msgs_admin_${id}`;
+        const map = getAdminSeenMessagesMap();
+        map[queryId] = String(latestMsgId || Date.now());
+        localStorage.setItem(key, JSON.stringify(map));
+    } catch (e) {}
+}
+
+function hasUnseenStudentMessageForAdmin(q) {
+    if (!q) return false;
+    const msgs = q.messages || [];
+    if (msgs.length === 0) return false;
+    const latest = msgs[msgs.length - 1];
+    const isFromStudent = (latest.sender_role || '').toLowerCase() === 'student';
+    if (!isFromStudent) return false;
+
+    const latestId = String(latest.message_id || latest.sent_at || latest.message_body || '1');
+    const seenMap = getAdminSeenMessagesMap();
+    return seenMap[q.query_id] !== latestId;
 }
 
 // Chart Instances
@@ -213,8 +251,7 @@ function renderDashboard() {
         const studentRoll = q.student?.roll_number || 'N/A';
         const msgList = q.messages || [];
         const msgCount = msgList.length || (q.reply ? 1 : 0);
-        const latestMsg = msgList.length > 0 ? msgList[msgList.length - 1] : null;
-        const hasNewStudentMsg = latestMsg ? (latestMsg.sender_role || '').toLowerCase() === 'student' : false;
+        const hasNewStudentMsg = hasUnseenStudentMessageForAdmin(q);
 
         const tr = document.createElement("tr");
         tr.className = "hover:bg-slate-50 transition-colors";
@@ -406,8 +443,7 @@ function renderQueriesTable(filteredList = null) {
         const escCount = q.escalations ? q.escalations.length : 0;
         const msgList = q.messages || [];
         const msgCount = msgList.length || (q.reply ? 1 : 0);
-        const latestMsg = msgList.length > 0 ? msgList[msgList.length - 1] : null;
-        const hasNewStudentMsg = latestMsg ? (latestMsg.sender_role || '').toLowerCase() === 'student' : false;
+        const hasNewStudentMsg = hasUnseenStudentMessageForAdmin(q);
         
         const tr = document.createElement("tr");
         tr.className = "hover:bg-slate-50 transition-colors";
@@ -518,13 +554,18 @@ async function openQueryModal(queryId) {
         }
 
         const msgList = q.messages || [];
-        const latestMsg = msgList.length > 0 ? msgList[msgList.length - 1] : null;
-        const hasNewStudentMsg = latestMsg ? (latestMsg.sender_role || '').toLowerCase() === 'student' : false;
+        const latest = msgList.length > 0 ? msgList[msgList.length - 1] : null;
+        if (latest) {
+            const latestId = String(latest.message_id || latest.sent_at || latest.message_body || '1');
+            markAdminQueryAsSeen(queryId, latestId);
+        }
         const newMsgBadge = document.getElementById("modal-new-msg-badge");
         if (newMsgBadge) {
-            if (hasNewStudentMsg) newMsgBadge.classList.remove("hidden");
-            else newMsgBadge.classList.add("hidden");
+            newMsgBadge.classList.add("hidden");
         }
+        // Immediately remove notification bell from queries table & dashboard
+        renderQueriesTable();
+        renderDashboard();
         const countText = document.getElementById("modal-chat-count-text");
         if (countText) {
             countText.innerText = `${msgList.length} ${msgList.length === 1 ? 'Message' : 'Messages'}`;
@@ -562,11 +603,13 @@ async function refreshModalMessages(queryId, silent = false) {
             state.activeQuery.status = data.status;
             const msgs = data.messages || [];
             const latestMsg = msgs.length > 0 ? msgs[msgs.length - 1] : null;
-            const hasNewStudentMsg = latestMsg ? (latestMsg.sender_role || '').toLowerCase() === 'student' : false;
+            if (latestMsg) {
+                const latestId = String(latestMsg.message_id || latestMsg.sent_at || latestMsg.message_body || '1');
+                markAdminQueryAsSeen(queryId, latestId);
+            }
             const newMsgBadge = document.getElementById("modal-new-msg-badge");
             if (newMsgBadge) {
-                if (hasNewStudentMsg) newMsgBadge.classList.remove("hidden");
-                else newMsgBadge.classList.add("hidden");
+                newMsgBadge.classList.add("hidden");
             }
             const countText = document.getElementById("modal-chat-count-text");
             if (countText) {
@@ -675,6 +718,8 @@ function closeQueryModal() {
     if (draftChips) {
         draftChips.innerHTML = `<span class="text-[11px] text-slate-400 italic">Select a query to load suggestions...</span>`;
     }
+    renderQueriesTable();
+    renderDashboard();
     refreshData();
 }
 

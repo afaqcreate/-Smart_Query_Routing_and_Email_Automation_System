@@ -1,6 +1,12 @@
 {
-  "cleanUrls": false,
+  "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/AllScreens/01_Login/01_login.html"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

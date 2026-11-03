@@ -469,8 +469,6 @@ async function refreshActiveQueryMessages(queryId, silent = false) {
 
             // Since student currently has the modal open, mark as seen
             markQueryReplyAsSeen(queryId);
-            renderQueries();
-            updateStats();
 
             const msgs = data.messages || [];
             const modalReplyBadge = document.getElementById('modalReplyBadge');
@@ -619,8 +617,6 @@ function closeModal() {
         setTimeout(() => {
             modal.classList.add('hidden');
             activeQueryId = null;
-            renderQueries();
-            updateStats();
         }, 300);
     }
 }

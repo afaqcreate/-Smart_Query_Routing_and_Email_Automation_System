@@ -1,4 +1,4 @@
-const URL = "http://127.0.0.1:8000/api";
+const URL = window.getApiUrl ? window.getApiUrl() : "http://127.0.0.1:8000/api";
 const button = document.querySelector('.btn-container');
 
 if (button) {

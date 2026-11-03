@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full bg-slate-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,13 +19,13 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#3663EB',
-                        bglight: '#F3F4F6',
+                        primary: '#2563EB',
+                        bglight: '#F1F5F9',
                         cardwhite: '#FFFFFF',
                         accentlight: '#EFF6FF',
                         borderblue: '#BFDBFE',
-                        successgreen: '#4EA44B',
-                        warningyellow: '#FDF9C3'
+                        successgreen: '#059669',
+                        warningyellow: '#FEF9C3'
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif']
@@ -36,7 +36,7 @@
     </script>
     <link rel="stylesheet" href="05_department.css">
 </head>
-<body class="bg-bglight text-slate-800 antialiased min-h-screen flex flex-col">
+<body class="h-full font-sans bg-slate-100 text-slate-800 antialiased flex flex-col">
 
     <div id="main-app" class="flex h-screen overflow-hidden">
         
@@ -92,7 +92,12 @@
                 <div class="flex items-center gap-4">
                     <h2 id="page-title" class="text-xl font-bold text-slate-900">Dashboard Overview</h2>
                 </div>
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <!-- Instructor Leave & Auto-Reply Quick Pill (Only shown for Instructors) -->
+                    <button id="header-leave-badge" onclick="switchTab('profile')" class="hidden items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border transition shadow-xs bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 cursor-pointer" title="Click to manage leave & auto-reply settings">
+                        <span id="header-leave-dot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span id="header-leave-text">Available</span>
+                    </button>
                     <div class="flex items-center gap-2 bg-accentlight px-3.5 py-2 rounded-xl border border-borderblue text-xs text-slate-700 font-medium">
                         <i class="fa-solid fa-calendar-days text-primary"></i>
                         <span id="current-date-display">October 13, 2026</span>
@@ -104,7 +109,27 @@
             <main class="flex-1 overflow-y-auto p-8 relative">
                 
                 <!-- TAB 1: DASHBOARD OVERVIEW -->
-                <section id="tab-content-dashboard" class="space-y-8">
+                <section id="tab-content-dashboard" class="space-y-6">
+                    <!-- Leave & Auto-Reply Active Notification Banner -->
+                    <div id="dashboard-leave-banner" class="hidden bg-amber-50/90 border border-amber-300 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-10 h-10 rounded-xl bg-amber-200/80 text-amber-800 flex items-center justify-center text-lg shrink-0">
+                                <i class="fa-solid fa-umbrella-beach"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h4 class="text-xs font-bold text-amber-900">Leave & Auto-Reply Mode Active</h4>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-200 text-amber-900 border border-amber-300 animate-pulse">OUT OF OFFICE</span>
+                                </div>
+                                <p id="dashboard-leave-banner-desc" class="text-xs text-amber-800 mt-0.5">Automated out-of-office replies are actively being sent to all student inquiries and chats.</p>
+                            </div>
+                        </div>
+                        <button onclick="switchTab('profile')" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition shadow-xs shrink-0 flex items-center gap-1.5 self-start sm:self-auto cursor-pointer">
+                            <i class="fa-solid fa-sliders"></i>
+                            <span>Leave Settings</span>
+                        </button>
+                    </div>
+
                     <!-- Statistics Grid -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
                         <div class="bg-cardwhite p-6 rounded-2xl border border-borderblue shadow-sm flex flex-col justify-between">
@@ -236,6 +261,8 @@
                                         <div class="flex items-center gap-2 mb-1 flex-wrap">
                                             <span id="detail-category" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-accentlight text-primary border border-borderblue">Database</span>
                                             <span id="detail-status-badge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">Pending</span>
+                                            <span id="detail-new-msg-badge" class="hidden text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-300 animate-pulse flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span><i class="fa-solid fa-bell text-xs"></i> New Student Message</span>
+                                            <span id="detail-chat-count" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1.5"><i class="fa-regular fa-comment-dots text-sm text-blue-600"></i> <span id="detail-chat-count-text">0 Messages</span></span>
                                             <span id="detail-escalated" class="hidden text-xs font-bold px-2.5 py-1 rounded-lg bg-rose-50 text-rose-600 border border-rose-200">
                                                 <i class="fa-solid fa-triangle-exclamation mr-1"></i> Escalated (24h)
                                             </span>
@@ -281,14 +308,48 @@
                                     </div>
                                 </div>
 
-                                <!-- Reply & Notes Form -->
-                                <div class="pt-2">
-                                    <label id="reply-Box" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Instructor Reply</label>
-                                    <textarea id="instructor-reply-text" rows="3" placeholder="Type your detailed explanation or answer for the student here..."
-                                        class="w-full p-3.5 rounded-xl border border-borderblue text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-bglight/30 resize-none"></textarea>
-                                    <div class="flex justify-end mt-3">
-                                        <button onclick="submitInstructorReply()" class="px-5 py-2.5 bg-primary hover:bg-blue-700 text-white rounded-xl text-xs font-semibold transition shadow-md shadow-blue-500/20 flex items-center gap-2">
-                                            <i class="fa-solid fa-paper-plane"></i> Send Reply & Update
+                                <!-- Conversation Thread -->
+                                <div class="pt-2 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                                            <i class="fa-solid fa-comments text-blue-600"></i> Conversation History
+                                        </label>
+                                        <span class="text-xs text-blue-600 font-semibold flex items-center gap-1">
+                                            <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span> Live Chat
+                                        </span>
+                                    </div>
+                                    <div id="department-chat-timeline" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 max-h-[300px] min-h-[160px] overflow-y-auto space-y-2">
+                                        <!-- Messages rendered here -->
+                                    </div>
+
+                                    <!-- AI Draft Suggestions Bar -->
+                                    <div id="ai-draft-container" class="bg-blue-50/70 rounded-xl border border-blue-200 p-3 space-y-2">
+                                        <div class="flex items-center justify-between text-xs">
+                                            <span class="font-bold text-blue-900 flex items-center gap-1.5">
+                                                <i class="fa-solid fa-wand-magic-sparkles text-blue-600"></i>
+                                                <span>AI Draft Suggestions</span>
+                                            </span>
+                                            <button type="button" onclick="fetchAiDraftSuggestions(currentActiveQueryId)" id="btn-refresh-ai-draft" class="text-[11px] font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors px-2 py-0.5 rounded-md hover:bg-blue-100/60 active:scale-95">
+                                                <i class="fa-solid fa-rotate text-[10px]"></i>
+                                                <span>Regenerate</span>
+                                            </button>
+                                        </div>
+                                        <div id="ai-draft-chips" class="flex flex-wrap gap-2 text-xs">
+                                            <span class="text-[11px] text-slate-400 italic">Select a query to load suggestions...</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center gap-2 pt-1">
+                                        <div class="relative flex-1">
+                                            <textarea id="instructor-reply-text" rows="2" onkeydown="if(event.key === 'Enter' && !event.shiftKey){event.preventDefault(); submitInstructorReply();}"
+                                                placeholder="Type a message or click an AI draft suggestion (Enter to send)..."
+                                                class="w-full bg-white border border-borderblue rounded-xl text-xs pl-4 pr-10 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary shadow-xs resize-none"></textarea>
+                                            <span class="absolute right-3 top-3 text-slate-400 text-xs pointer-events-none">
+                                                <i class="fa-regular fa-comment-dots"></i>
+                                            </span>
+                                        </div>
+                                        <button onclick="submitInstructorReply()" class="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5 active:scale-95 shrink-0 self-end">
+                                            <i class="fa-solid fa-paper-plane"></i> Send
                                         </button>
                                     </div>
                                 </div>
@@ -344,20 +405,85 @@
                                     <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Email Address</span>
                                     <span id="profile-email" class="text-sm font-semibold text-slate-800">dr.elena.vance@university.edu</span>
                                 </div>
-                                <!-- <div class="bg-bglight/50 p-4 rounded-xl border border-borderblue">
-                                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">System Role ID</span>
-                                    <span id="profile-role-id" class="text-sm font-semibold text-slate-800">INST-PROF-9921</span> -->
-                                </div>
-                                <!-- <div class="bg-bglight/50 p-4 rounded-xl border border-borderblue">
-                                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Department</span>
-                                    <span class="text-sm font-semibold text-slate-800">Computer Science & Engineering</span>
-                                </div> -->
                                 <div class="bg-bglight/50 p-4 rounded-xl border border-borderblue">
                                     <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Total Handled Queries</span>
                                     <span id="profile-handled-count" class="text-sm font-semibold text-slate-800">142 Queries</span>
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- CARD: LEAVE & AUTO-REPLY SETTINGS (Only for Instructors) -->
+                    <div id="card-leave-settings" class="bg-cardwhite rounded-2xl border border-borderblue shadow-sm overflow-hidden hidden">
+                        <div class="p-6 border-b border-borderblue bg-blue-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-11 h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+                                    <i class="fa-solid fa-umbrella-beach"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="font-bold text-slate-900 text-base leading-tight">Instructor Leave & AI Auto-Reply Mode</h3>
+                                        <span id="profile-leave-status-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">AVAILABLE</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-0.5">When On Leave is turned ON, AI dynamically generates contextual out-of-office replies tailored to each student inquiry.</p>
+                                </div>
+                            </div>
+                            <!-- Primary Leave Status Toggle -->
+                            <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border border-blue-200 shadow-xs self-start sm:self-auto">
+                                <span class="text-xs font-bold text-slate-700" id="leave-toggle-status-label">Available</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="leave-mode-toggle" onchange="toggleLeaveModeState(this.checked)" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <form id="leave-settings-form" onsubmit="saveInstructorLeaveSettings(event)" class="p-6 space-y-6">
+                            <!-- Leave Period & Reason Fields -->
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Leave Start Date</label>
+                                    <input type="date" id="leave-start-date" class="w-full bg-white border border-borderblue rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary shadow-xs">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Expected Return Date</label>
+                                    <input type="date" id="leave-end-date" class="w-full bg-white border border-borderblue rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary shadow-xs">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Reason / Notice</label>
+                                    <input type="text" id="leave-reason" placeholder="e.g. Sabbatical, Conference, Medical" class="w-full bg-white border border-borderblue rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary shadow-xs">
+                                </div>
+                            </div>
+
+                            <!-- Auto-Reply Mode Toggle & Template -->
+                            <div class="space-y-3 pt-4 border-t border-borderblue">
+                                <div class="flex items-center justify-between flex-wrap gap-2">
+                                    <div class="flex items-center gap-2">
+                                        <input type="checkbox" id="leave-auto-reply-enabled" checked class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                                        <label for="leave-auto-reply-enabled" class="text-xs font-bold text-slate-800 cursor-pointer select-none">
+                                            Enable AI-Generated Out-of-Office Reply to Students
+                                        </label>
+                                    </div>
+                                    <button type="button" onclick="generateAiLeaveAutoReply()" id="btn-ai-auto-reply" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1.5 px-3 py-1 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-all active:scale-95 shadow-xs cursor-pointer">
+                                        <i class="fa-solid fa-wand-magic-sparkles text-blue-600"></i>
+                                        <span>Draft Guidance with AI</span>
+                                    </button>
+                                </div>
+                                <div class="relative">
+                                    <textarea id="leave-auto-reply-message" rows="4" placeholder="Optional custom instructions for AI (e.g. 'For urgent issues contact HOD; submit assignments via LMS')..." class="w-full bg-white border border-borderblue rounded-xl p-3.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary shadow-xs resize-y leading-relaxed font-sans"></textarea>
+                                </div>
+                                <p class="text-[11px] text-slate-400 italic">✨ When active, Gemini AI automatically reads each student's question and crafts a unique, personalized reply addressing their specific topic while explaining that you are on leave.</p>
+                            </div>
+
+                            <!-- Action Bar -->
+                            <div class="flex items-center justify-between pt-4 border-t border-borderblue">
+                                <span id="leave-last-updated" class="text-xs text-slate-400"></span>
+                                <button type="submit" id="btn-save-leave" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-2 active:scale-95 cursor-pointer">
+                                    <i class="fa-solid fa-check"></i>
+                                    <span>Save Leave Settings</span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </section>
 

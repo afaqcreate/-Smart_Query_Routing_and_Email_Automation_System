@@ -51,7 +51,18 @@
                     <i class="fa-solid fa-clock-rotate-left text-lg"></i>
                     <div class="flex-1 text-left flex items-center justify-between">
                         <span>Query History</span>
-                        <span id="totalQueryBadge" class="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full font-semibold">0</span>
+                        <div class="flex items-center gap-1.5">
+                            <span id="navReplyBadge" class="hidden bg-emerald-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1"><i class="fa-solid fa-reply text-[8px]"></i> New</span>
+                            <span id="totalQueryBadge" class="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full font-semibold">0</span>
+                        </div>
+                    </div>
+                </button>
+
+                <button onclick="switchTab('announcementsTab')" id="navAnnouncements" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+                    <i class="fa-solid fa-bullhorn text-lg"></i>
+                    <div class="flex-1 text-left flex items-center justify-between">
+                        <span>Announcements</span>
+                        <span id="navAnnouncementBadge" class="hidden bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">0</span>
                     </div>
                 </button>
             </nav>
@@ -61,7 +72,7 @@
                 <div class="bg-blue-50 p-4 rounded-xl border border-blue-200/60">
                     <div class="flex items-center space-x-3 mb-3">
                         <div class="relative">
-                            <img id="userAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Student Profile" class="w-12 h-12 rounded-full object-cover border-2 border-blue-600">
+                            <img id="userAvatar" src="https://images.unsplash.com/photo-1793252539504-eea54c3bc2c9?w=150&auto=format&fit=crop&q=80" alt="Student Profile" class="w-12 h-12 rounded-full object-cover border-2 border-blue-600">
                             <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
                         </div>
                         <div class="overflow-hidden">
@@ -108,6 +119,32 @@
 
         <div class="p-4 sm:p-6 md:p-8 max-w-5xl mx-auto w-full flex-1">
             
+            <!-- Campus Urgent Announcement Banner (Shown when urgent/important broadcasts are published) -->
+            <div id="student-urgent-announcement-banner" class="hidden mb-6 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white p-4 sm:p-5 rounded-2xl shadow-sm border border-amber-300/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+                <div class="flex items-start sm:items-center space-x-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-white/20 border border-white/30 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-bullhorn text-white text-base animate-pulse"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white text-orange-800 uppercase tracking-wide">Campus Notice</span>
+                            <span id="student-banner-category" class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/20 text-white">General</span>
+                            <span id="student-banner-date" class="text-[11px] text-amber-100 font-medium"></span>
+                        </div>
+                        <h4 id="student-banner-title" class="font-bold text-sm sm:text-base mt-0.5 tracking-tight"></h4>
+                        <p id="student-banner-preview" class="text-xs text-amber-50 line-clamp-1 sm:line-clamp-2 mt-0.5 max-w-2xl"></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                    <button onclick="switchTab('announcementsTab')" class="px-3.5 py-2 bg-white text-orange-800 hover:bg-amber-50 text-xs font-bold rounded-xl transition shadow-xs whitespace-nowrap cursor-pointer">
+                        View Announcement
+                    </button>
+                    <button onclick="dismissStudentBanner()" class="text-white/80 hover:text-white p-2 text-sm transition cursor-pointer" title="Dismiss banner">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
             <!-- SECTION 1: Submit Query Tab -->
             <section id="submitTab" class="tab-content space-y-6">
                 <form id="queryForm" onsubmit="handleQuerySubmit(event)" class="bg-white p-6 sm:p-8 rounded-2xl border border-blue-200/70 shadow-sm space-y-6">
@@ -174,6 +211,51 @@
                     <!-- Dynamic queries will be rendered here -->
                 </div>
             </section>
+
+            <!-- SECTION 3: Campus Announcements & Broadcasts Tab -->
+            <section id="announcementsTab" class="tab-content hidden space-y-6">
+                <!-- Header Card -->
+                <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white p-6 sm:p-7 rounded-2xl shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-white border border-white/30 uppercase tracking-wider">Official Broadcasts</span>
+                            <span class="text-xs text-blue-100 flex items-center gap-1.5"><i class="fa-solid fa-shield-halved"></i> University Administration</span>
+                        </div>
+                        <h3 class="text-xl font-bold tracking-tight">University Announcements</h3>
+                        <p class="text-xs text-blue-100 max-w-2xl leading-relaxed">
+                            Stay up-to-date with official broadcasts regarding academic schedules, examinations, deadlines, campus updates, and emergency notices.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button onclick="fetchStudentAnnouncements(true)" class="px-3.5 py-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                            <span>Refresh</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters & Category Navigation -->
+                <div class="flex items-center justify-between flex-wrap gap-3">
+                    <div class="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-xl text-xs overflow-x-auto">
+                        <button onclick="setStudentAnnouncementFilter('all')" id="student-ann-filter-all" class="px-3 py-1.5 rounded-lg font-bold bg-white text-blue-600 shadow-xs transition cursor-pointer">All Notices</button>
+                        <button onclick="setStudentAnnouncementFilter('urgent')" id="student-ann-filter-urgent" class="px-3 py-1.5 rounded-lg font-medium text-slate-600 hover:text-blue-600 transition cursor-pointer">Urgent</button>
+                        <button onclick="setStudentAnnouncementFilter('Academic')" id="student-ann-filter-academic" class="px-3 py-1.5 rounded-lg font-medium text-slate-600 hover:text-blue-600 transition cursor-pointer">Academic</button>
+                        <button onclick="setStudentAnnouncementFilter('Exam')" id="student-ann-filter-exam" class="px-3 py-1.5 rounded-lg font-medium text-slate-600 hover:text-blue-600 transition cursor-pointer">Exams</button>
+                        <button onclick="setStudentAnnouncementFilter('Fee & Finance')" id="student-ann-filter-fee" class="px-3 py-1.5 rounded-lg font-medium text-slate-600 hover:text-blue-600 transition cursor-pointer">Fees</button>
+                    </div>
+                    <div class="text-xs text-slate-500 font-medium">
+                        Showing <span id="student-ann-count" class="font-bold text-slate-800">0</span> notices
+                    </div>
+                </div>
+
+                <!-- Announcements Cards Feed -->
+                <div id="student-announcements-feed" class="space-y-4">
+                    <div class="flex flex-col items-center justify-center py-12 text-slate-400 text-center">
+                        <i class="fa-solid fa-spinner fa-spin text-2xl text-blue-600 mb-2"></i>
+                        <p class="text-xs">Loading campus announcements...</p>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
 
@@ -184,8 +266,10 @@
             <!-- Modal Header -->
             <div class="bg-blue-50 border-b border-blue-200 p-5 flex items-start justify-between">
                 <div>
-                    <div class="flex items-center space-x-3 mb-1">
+                    <div class="flex flex-wrap items-center gap-2 mb-1">
                         <span id="modalQueryId" class="text-sm font-extrabold text-blue-600 bg-white px-2.5 py-0.5 rounded-md border border-blue-200">#ATC - 0000</span>
+                        <span id="modalReplyBadge" class="hidden text-xs font-bold text-blue-800 bg-blue-100 px-2.5 py-0.5 rounded-full border border-blue-300 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-600"></span><i class="fa-solid fa-reply"></i> New Reply</span>
+                        <span id="modalMsgCountBadge" class="text-xs font-bold text-slate-700 bg-white px-2.5 py-0.5 rounded-md border border-slate-200 flex items-center gap-1.5"><i class="fa-regular fa-comment-dots text-blue-600"></i> <span id="modalMsgCountText">0 Messages</span></span>
                     </div>
                     <h3 id="modalSubject" class="text-lg font-bold text-slate-900 mt-1">Query Title Preview</h3>
                     <p id="modalTimestamp" class="text-xs text-slate-500 mt-0.5">Submitted on: Oct 12, 2026 at 10:30 AM</p>
@@ -244,21 +328,25 @@
                 <div class="space-y-3 pt-4 border-t border-slate-200">
                     <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
                         <span>Communication History & Replies</span>
-                        <span class="text-blue-600 text-[11px] font-medium"><i class="fa-solid fa-comments mr-1"></i>Live Support Thread</span>
+                        <span class="text-blue-600 text-[11px] font-semibold flex items-center gap-1.5"><i class="fa-solid fa-comments text-sm"></i> Live Conversation</span>
                     </h4>
                     
-                    <div id="replyTimeline" class="space-y-4">
+                    <div id="replyTimeline" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 max-h-[320px] overflow-y-auto space-y-2">
                         <!-- Dynamic replies rendered here -->
                     </div>
                 </div>
             </div>
 
-            <!-- Follow-up Message Input Footer (Changed from Textarea to Text Box) -->
-            <div class="bg-slate-100 p-4 border-t border-blue-200 flex flex-col space-y-2">
-                <label class="text-xs font-bold text-slate-700">Add Follow-up Message / Response:</label>
-                <div class="flex space-x-2">
-                    <input type="text" id="followUpInput" placeholder="Type your follow-up reply here..." class="flex-1 bg-white border border-blue-200 rounded-xl text-xs px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-600">
-                    <button onclick="submitFollowUp()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-xs transition-colors flex items-center space-x-1.5">
+            <!-- Follow-up Message Input Footer -->
+            <div class="bg-slate-50 p-3.5 border-t border-blue-200 flex flex-col space-y-2">
+                <div class="flex items-center space-x-2">
+                    <div class="relative flex-1">
+                        <input type="text" id="followUpInput" onkeydown="if(event.key === 'Enter') submitFollowUp()" placeholder="Type a message (press Enter to send)..." class="w-full bg-white border border-blue-200 rounded-xl text-xs pl-4 pr-10 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-xs">
+                        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">
+                            <i class="fa-regular fa-comment-dots"></i>
+                        </span>
+                    </div>
+                    <button onclick="submitFollowUp()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-xs transition-all flex items-center space-x-1.5 active:scale-95">
                         <i class="fa-solid fa-paper-plane"></i>
                         <span>Send</span>
                     </button>

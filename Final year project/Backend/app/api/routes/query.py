@@ -18,7 +18,11 @@ query = APIRouter(prefix="/api/query", tags=["Query"])
 
 
 class QueryStatusUpdate(BaseModel):
-    status: Literal["pending", "in_progress", "resolved", "ESCALATED_24H"]
+    status: Optional[str] = None
+    reply: Optional[str] = None
+    sender_id: Optional[int] = None
+    sender_name: Optional[str] = None
+    sender_role: Optional[str] = None
 
 
 @query.post("/", response_model=QueryResponse, status_code=201)

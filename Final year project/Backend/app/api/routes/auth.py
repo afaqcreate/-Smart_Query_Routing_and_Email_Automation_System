@@ -1,3 +1,4 @@
+import json
 import secrets
 from urllib.parse import urlencode
 
@@ -103,9 +104,8 @@ def google_callback(
             detail="This Google account is not registered in the system.",
         )
 
-    import json
     user_payload = json.dumps(
-        {"id": db_user.id, "name": db_user.name, "email": db_user.email, "role": db_user.role, "roll_number": getattr(db_user, "roll_number", None) }
+        {"id": db_user.id, "name": db_user.name, "email": db_user.email, "role": db_user.role, "roll_number": getattr(db_user, "roll_number", None)}
     ).replace("<", "\\u003c")
 
     html_content = f"""<!doctype html>
@@ -118,7 +118,7 @@ def google_callback(
     window.opener.postMessage({{
       type: "GOOGLE_AUTH_SUCCESS",
       user: {user_payload}
-    }}, {json.dumps(FRONTEND_ORIGIN)});
+    }}, "*");
     window.close();
   }}
 </script>

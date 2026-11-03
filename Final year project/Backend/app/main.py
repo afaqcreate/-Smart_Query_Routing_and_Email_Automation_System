@@ -10,7 +10,9 @@ from app.api.routes.route import router
 from app.api.routes.user import user
 from app.api.routes.admin import admin
 from app.api.routes.automation import automat
-from app.config import FRONTEND_ORIGIN
+from app.api.routes.leave import instructor_leave_router
+from app.api.routes.announcement import announcement_router
+from app.config import FRONTEND_ORIGIN, ALLOWED_ORIGINS
 from app.database.base import Base
 from app.database.connection import engine
 from app.models import table as _models
@@ -20,9 +22,9 @@ from app.models import table as _models
 async def lifespan(app: FastAPI):
     try:
         Base.metadata.create_all(bind=engine)
-        print("✅ Cloud Database tables verified/created successfully.")
+        print("[OK] Cloud Database tables verified/created successfully.")
     except Exception as e:
-        print(f"❌ Database connection failed during startup: {e}")
+        print(f"[ERROR] Database connection failed during startup: {e}")
     yield
 
 
@@ -35,14 +37,11 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        FRONTEND_ORIGIN,
-        "http://localhost:5500",
-        "http://127.0.0.1:5500",
-    ],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_origin_regex=r"^https://.*\.vercel\.app$",
     allow_credentials=True,
-    allow_methods=["DELETE", "POST", "GET", "OPTIONS", "PATCH"],
-    allow_headers=["Authorization", "Content-Type"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
@@ -54,6 +53,8 @@ app.include_router(escalation)
 app.include_router(admin)
 app.include_router(automat)
 app.include_router(message)
+app.include_router(instructor_leave_router)
+app.include_router(announcement_router)
 
 
 @app.get("/", tags=["Root"])

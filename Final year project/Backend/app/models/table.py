@@ -40,11 +40,11 @@ class User(Base):
         lazy="selectin",
         passive_deletes=True,
     )
-    
-    messages: Mapped[list["QueryMessage"]] = relationship(
+    leave_status: Mapped[Optional["InstructorLeave"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
-        lazy="selectin",
+        uselist=False,
+        lazy="joined",
         passive_deletes=True,
     )
 
@@ -147,8 +147,11 @@ class QueryMessage(Base):
     __tablename__ = "query_messages"
 
     message_id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    query_id: Mapped[int] = mapped_column(ForeignKey("queries.query_id", ondelete="CASCADE"), nullable=False)
-    sender_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False) 
+    query_id: Mapped[int] = mapped_column(
+        ForeignKey("queries.query_id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    sender_id: Mapped[int] = mapped_column(nullable=False, index=True)
+    sender_name: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     sender_role: Mapped[str] = mapped_column(String(50), nullable=False)
     
     message_body: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
@@ -161,4 +164,59 @@ class QueryMessage(Base):
     )
 
     query: Mapped["Query"] = relationship(back_populates="messages")
-    user: Mapped["User"] = relationship(back_populates="messages")
+
+
+class InstructorLeave(Base):
+    __tablename__ = "instructor_leaves"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), unique=True, nullable=False, index=True
+    )
+    is_on_leave: Mapped[bool] = mapped_column(default=False, server_default="false", nullable=False)
+    leave_start: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    leave_end: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    leave_reason: Mapped[Optional[str]] = mapped_column(String(200), nullable=True)
+    auto_reply_enabled: Mapped[bool] = mapped_column(default=True, server_default="true", nullable=False)
+    auto_reply_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=get_utc_time,
+        server_default=func.now(),
+        onupdate=get_utc_time,
+        nullable=False,
+    )
+
+    user: Mapped["User"] = relationship(back_populates="leave_status")
+
+
+class Announcement(Base):
+    __tablename__ = "announcements"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    admin_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    admin_name: Mapped[str] = mapped_column(String(100), default="Administrator", nullable=False)
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    message: Mapped[str] = mapped_column(Text, nullable=False)
+    category: Mapped[str] = mapped_column(String(50), default="General", nullable=False)
+    priority: Mapped[str] = mapped_column(String(20), default="normal", nullable=False)
+    target_audience: Mapped[str] = mapped_column(String(50), default="all_students", nullable=False)
+    is_active: Mapped[bool] = mapped_column(default=True, server_default="true", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=get_utc_time,
+        server_default=func.now(),
+        nullable=False,
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=get_utc_time,
+        server_default=func.now(),
+        onupdate=get_utc_time,
+        nullable=False,
+    )
+
+    admin: Mapped[Optional["User"]] = relationship()
+

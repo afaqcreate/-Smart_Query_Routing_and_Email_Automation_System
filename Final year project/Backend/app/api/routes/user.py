@@ -13,8 +13,10 @@ user = APIRouter(prefix="/api/user", tags=["User"])
 
 @user.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def create_new_user(user_in: UserCreate, db: Session = Depends(get_db)):
-    existing = db.scalar(select(User and Student).where(User.email == str(user_in.email) or Student.email == str(user_in.email)))
-    if existing is not None:
+    target_email = str(user_in.email).strip().lower()
+    existing_user = db.scalar(select(User).where(User.email.ilike(target_email)))
+    existing_student = db.scalar(select(Student).where(Student.email.ilike(target_email)))
+    if existing_user is not None or existing_student is not None:
         raise HTTPException(status_code=409, detail="A user with this email already exists.")
     try:
         return create_user(db, user_in)

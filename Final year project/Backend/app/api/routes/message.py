@@ -16,16 +16,17 @@ from app.schemas.subschemas import MessageCreate, MessageResponse
 
 message = APIRouter(prefix="/api/message", tags=["Message"])
 
+@message.post("/{query_id}/messages", response_model=MessageResponse)
 @message.patch("/{query_id}/messages", response_model=MessageResponse)
-def post_query_message(
+async def post_query_message(
     query_id: int,
     payload: MessageCreate,
     db: Session = Depends(get_db)
 ):
-    updated_query = add_query_message(db, query_id, payload)
-    if not updated_query:
+    updated_message = await add_query_message(db, query_id, payload)
+    if not updated_message:
         raise HTTPException(status_code=404, detail="Query not found")
-    return updated_query
+    return updated_message
 
 
 @message.get("/{query_id}")
@@ -34,21 +35,25 @@ def get_query_details(query_id: int, db: Session = Depends(get_db)):
     if not query:
         raise HTTPException(status_code=404, detail="Query not found")
         
-    # Return query along with its threaded messages sorted by date
     return {
         "query_id": query.query_id,
         "query_subject": query.query_subject,
         "query_body": query.query_body,
+        "category": query.category,
         "status": query.status,
+        "reply": query.reply,
         "submitted_at": query.submitted_at,
         "student": query.student,
+        "user": query.user,
         "messages": [
             {
                 "message_id": m.message_id,
+                "query_id": m.query_id,
                 "sender_id": m.sender_id,
+                "sender_name": m.sender_name,
                 "sender_role": m.sender_role,
                 "message_body": m.message_body,
                 "sent_at": m.sent_at
-            } for m in query.messages
+            } for m in sorted(query.messages, key=lambda x: x.sent_at)
         ]
     }

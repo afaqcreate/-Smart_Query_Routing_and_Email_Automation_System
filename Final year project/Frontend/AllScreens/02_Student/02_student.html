@@ -120,26 +120,26 @@
         <div class="p-4 sm:p-6 md:p-8 max-w-5xl mx-auto w-full flex-1">
             
             <!-- Campus Urgent Announcement Banner (Shown when urgent/important broadcasts are published) -->
-            <div id="student-urgent-announcement-banner" class="hidden mb-6 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white p-4 sm:p-5 rounded-2xl shadow-sm border border-amber-300/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+            <div id="student-urgent-announcement-banner" style="background: linear-gradient(135deg, #c2410c 0%, #ea580c 50%, #d97706 100%) !important; color: #ffffff !important;" class="hidden mb-6 text-white p-4 sm:p-5 rounded-2xl shadow-md border border-orange-400/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
                 <div class="flex items-start sm:items-center space-x-3.5">
-                    <div class="w-10 h-10 rounded-xl bg-white/20 border border-white/30 flex items-center justify-center shrink-0">
+                    <div style="background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.4);" class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-xs">
                         <i class="fa-solid fa-bullhorn text-white text-base animate-pulse"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-2 flex-wrap">
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white text-orange-800 uppercase tracking-wide">Campus Notice</span>
-                            <span id="student-banner-category" class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/20 text-white">General</span>
-                            <span id="student-banner-date" class="text-[11px] text-amber-100 font-medium"></span>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-white text-orange-900 uppercase tracking-wide shadow-xs">Campus Notice</span>
+                            <span id="student-banner-category" style="background: rgba(255, 255, 255, 0.25); border: 1px solid rgba(255, 255, 255, 0.4); color: #ffffff;" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold">General</span>
+                            <span id="student-banner-date" style="color: #ffedd5;" class="text-[11px] font-semibold"></span>
                         </div>
-                        <h4 id="student-banner-title" class="font-bold text-sm sm:text-base mt-0.5 tracking-tight"></h4>
-                        <p id="student-banner-preview" class="text-xs text-amber-50 line-clamp-1 sm:line-clamp-2 mt-0.5 max-w-2xl"></p>
+                        <h4 id="student-banner-title" style="color: #ffffff;" class="font-extrabold text-sm sm:text-base mt-1 tracking-tight"></h4>
+                        <p id="student-banner-preview" style="color: #fff7ed;" class="text-xs font-normal line-clamp-1 sm:line-clamp-2 mt-0.5 max-w-2xl leading-relaxed"></p>
                     </div>
                 </div>
-                <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
-                    <button onclick="switchTab('announcementsTab')" class="px-3.5 py-2 bg-white text-orange-800 hover:bg-amber-50 text-xs font-bold rounded-xl transition shadow-xs whitespace-nowrap cursor-pointer">
+                <div class="flex items-center gap-2.5 shrink-0 self-end sm:self-center">
+                    <button onclick="switchTab('announcementsTab')" class="px-4 py-2 bg-white text-orange-900 hover:bg-orange-50 text-xs font-extrabold rounded-xl transition shadow-md whitespace-nowrap cursor-pointer">
                         View Announcement
                     </button>
-                    <button onclick="dismissStudentBanner()" class="text-white/80 hover:text-white p-2 text-sm transition cursor-pointer" title="Dismiss banner">
+                    <button onclick="dismissStudentBanner()" style="color: rgba(255, 255, 255, 0.85);" class="hover:text-white p-2 text-sm transition cursor-pointer" title="Dismiss banner">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
@@ -215,19 +215,19 @@
             <!-- SECTION 3: Campus Announcements & Broadcasts Tab -->
             <section id="announcementsTab" class="tab-content hidden space-y-6">
                 <!-- Header Card -->
-                <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white p-6 sm:p-7 rounded-2xl shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div class="space-y-1">
+                <div style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #1d4ed8 100%) !important; color: #ffffff !important;" class="text-white p-6 sm:p-7 rounded-2xl shadow-md flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div class="space-y-1.5">
                         <div class="flex items-center gap-2">
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-white border border-white/30 uppercase tracking-wider">Official Broadcasts</span>
-                            <span class="text-xs text-blue-100 flex items-center gap-1.5"><i class="fa-solid fa-shield-halved"></i> University Administration</span>
+                            <span style="background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.4); color: #ffffff;" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-xs">Official Broadcasts</span>
+                            <span style="color: #dbeafe;" class="text-xs font-medium flex items-center gap-1.5"><i class="fa-solid fa-shield-halved"></i> University Administration</span>
                         </div>
-                        <h3 class="text-xl font-bold tracking-tight">University Announcements</h3>
-                        <p class="text-xs text-blue-100 max-w-2xl leading-relaxed">
+                        <h3 style="color: #ffffff;" class="text-xl font-extrabold tracking-tight">University Announcements</h3>
+                        <p style="color: #eff6ff;" class="text-xs font-normal max-w-2xl leading-relaxed">
                             Stay up-to-date with official broadcasts regarding academic schedules, examinations, deadlines, campus updates, and emergency notices.
                         </p>
                     </div>
                     <div class="flex items-center gap-2 shrink-0">
-                        <button onclick="fetchStudentAnnouncements(true)" class="px-3.5 py-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+                        <button onclick="fetchStudentAnnouncements(true)" style="background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.35); color: #ffffff;" class="px-4 py-2 hover:bg-white/25 text-xs font-bold rounded-xl transition flex items-center gap-1.5 cursor-pointer shadow-xs">
                             <i class="fa-solid fa-arrows-rotate"></i>
                             <span>Refresh</span>
                         </button>

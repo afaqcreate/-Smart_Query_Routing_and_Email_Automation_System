@@ -26,7 +26,7 @@ DATABASE_URL = raw_db_url
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "").strip()
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "").strip()
-REDIRECT_URI = os.getenv("REDIRECT_URI", "http://127.0.0.1:8000/api/auth/google/callback").strip()
+REDIRECT_URI = os.getenv("REDIRECT_URI", "https://smart-query-backend-8ggr.onrender.com/api/auth/google/callback").strip()
 
 # Support multiple allowed origins (comma-separated or single)
 raw_frontend = os.getenv("FRONTEND_ORIGINS") or os.getenv("FRONTEND_ORIGIN", "http://127.0.0.1:5500")

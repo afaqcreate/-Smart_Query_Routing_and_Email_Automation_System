@@ -5,7 +5,7 @@
 // Set your deployed Render backend URL here:
 // When deployed on Vercel, the frontend automatically connects to this backend.
 // When running locally (localhost / 127.0.0.1), it automatically connects to http://127.0.0.1:8000.
-const DEFAULT_PRODUCTION_BACKEND = "https://smart-query-routing-backend.onrender.com";
+const DEFAULT_PRODUCTION_BACKEND = "https://smart-query-backend-8ggr.onrender.com";
 
 function getBackendBaseUrl() {
     // 1. Explicit window override (e.g. from test suite)

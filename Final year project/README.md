@@ -1,6 +1,7 @@
 # Smart Query Routing and Email Automation System (Query UNI)
 
 [![Live Demo](https://img.shields.io/badge/Demo-aiquerysystem.vercel.app-0070f3?style=for-the-badge&logo=vercel&logoColor=white)](https://aiquerysystem.vercel.app/AllScreens/01_Login/01_login)
+[![Backend API](https://img.shields.io/badge/Backend_API-Render_Live-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://smart-query-backend-8ggr.onrender.com/docs)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://supabase.com/)

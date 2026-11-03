@@ -36,11 +36,11 @@ window.addEventListener("message", (event) => {
         if (role === "student") {
           window.location.href = "../02_Student/02_student.html";
         } else if (role === "instructor" || role === "it department" || role === "registrar department" || role === "exam department" || role === "finance department") {
-          window.location.href = "../05_department/05_department.html";
+          window.location.href = "../05_Department/05_department.html";
         } else if (role === "head of department") {
-          window.location.href = "../04_hod/04_hod.html";
+          window.location.href = "../04_HOD/04_hod.html";
         } else if (role === "admin") {
-          window.location.href = "../06_admin/06_admin.html";
+          window.location.href = "../06_Admin/06_admin.html";
         } else {
           console.error("Unknown user role:", userdata.role);
           setGlobalLoading(false);

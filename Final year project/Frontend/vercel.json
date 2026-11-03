@@ -2,10 +2,17 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    {
-      "source": "/",
-      "destination": "/AllScreens/01_Login/01_login.html"
-    }
+    { "source": "/", "destination": "/AllScreens/01_Login/01_login.html" },
+    { "source": "/login", "destination": "/AllScreens/01_Login/01_login.html" },
+    { "source": "/student", "destination": "/AllScreens/02_Student/02_student.html" },
+    { "source": "/hod", "destination": "/AllScreens/04_HOD/04_hod.html" },
+    { "source": "/department", "destination": "/AllScreens/05_Department/05_department.html" },
+    { "source": "/admin", "destination": "/AllScreens/06_Admin/06_admin.html" },
+    { "source": "/AllScreens/01_login/:path*", "destination": "/AllScreens/01_Login/:path*" },
+    { "source": "/AllScreens/02_student/:path*", "destination": "/AllScreens/02_Student/:path*" },
+    { "source": "/AllScreens/04_hod/:path*", "destination": "/AllScreens/04_HOD/:path*" },
+    { "source": "/AllScreens/05_department/:path*", "destination": "/AllScreens/05_Department/:path*" },
+    { "source": "/AllScreens/06_admin/:path*", "destination": "/AllScreens/06_Admin/:path*" }
   ],
   "headers": [
     {
